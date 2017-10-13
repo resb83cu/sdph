@@ -13,7 +13,7 @@ if (! defined ( 'BASEPATH' ))
 |	http://example.com/
 |
 */
-$config ['base_url'] = 'http://localhost:8080/sdph/';//'http://sdph.etecsa.cu/'
+$config ['base_url'] = 'http://localhost:8080/sdph/sdph/';//'http://sdph.etecsa.cu/'
 
 $config ['base_app'] = 'system/application/';
 

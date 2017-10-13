@@ -52,11 +52,6 @@ class Conf_viazul_routes extends Controller {
         die("{data:" . json_encode($datos) . "}");
     }
 
-    public function canInsert() {
-        $datos = $this->conn->canInsert(1,2);
-        die("{data:" . json_encode($datos) . "}");
-    }
-
     /**
      * Funcion para Insertar hotels
      *
