@@ -1,0 +1,38 @@
+@CHARSET "UTF-8";
+
+body .x-panel {
+	margin-bottom: 20px;
+}
+
+.grid {
+	background-image: url(../images/grid.png) !important;
+}
+
+.pdf {
+	background-image: url(../images/pdf.gif) !important;
+}
+
+.xls {
+	background-image: url(../images/xls.gif) !important;
+}
+
+#button-grid .x-panel-body {
+	border: 1px solid #99bbe8;
+	border-top: 0 none;
+}
+
+.add {
+	background-image: url(../images/add.gif) !important;
+}
+
+.mod {
+	background-image: url(../images/plugin_add.gif) !important;
+}
+
+.del {
+	background-image: url(../images/delete.gif) !important;
+}
+
+.save {
+	background-image: url(../shared/icons/save.gif) !important;
+}

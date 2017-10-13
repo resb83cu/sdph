@@ -1,0 +1,259 @@
+@CHARSET "UTF-8";
+
+/* CSS Document */
+body {
+	background-color: #fafafa;
+	color: #4F5155;
+	margin-top: 0px;
+	font: x-small Arial, Helvetica, sans-serif;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	font-size: small;
+	margin: 0px;
+}
+
+/* Links
+----------------------------------------------- */
+a:link,a:visited {
+	color: #0224C5;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #FB5F1B;
+	text-decoration: underline;
+}
+
+a:link img,a:visited img {
+	border-width: 0;
+}
+
+/* Limpiador
+----------------------------------------------- */
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.clearfix {
+	display: inline-table;
+}
+
+/* Hides from IE-mac \*/
+* html .clearfix {
+	height: 1%;
+}
+
+.clearfix {
+	display: block;
+}
+
+/* Encabezados
+----------------------------------------------- */
+h1,h2,h3,h4 {
+	color: #444;
+	background-color: transparent;
+	border-bottom: 1px solid #D0D0D0;
+	font-weight: bold;
+	margin: 24px 0 2px 0;
+	padding: 5px 0 6px 0;
+	clear: both;
+}
+
+h1 {
+	font-size: 160%;
+}
+
+h2 {
+	font-size: 140%;
+}
+
+h3 {
+	font-size: 120%;
+}
+
+h4 {
+	font-size: 110%;
+}
+
+/* Cabeceras y Pie
+------------------------------------------------ */
+.cabecera {
+	height: 88px;
+	background-color: #fff;
+	min-width: 790px;
+	font-size: 160%;
+	font-weight: bold;
+}
+
+.logo {
+	padding-top: 6px;
+	padding-left: 26px;
+}
+
+.pie {
+	border-top: 1px solid #cccdc6;
+	font-size: 86%;
+	min-width: 790px;
+	padding-top: 10px;
+}
+
+/* INICIO DE LOS MENUS
+------------------------------------------------ */ /* MENU 0*/
+#menu0 {
+	position: relative;
+	height: 30px;
+	border-bottom: 5px solid #a1a1a1;
+}
+
+#menu0 ul {
+	position: relative;
+	top: 3px;
+	padding: 0px;
+	margin: 0px;
+	list-style: none;
+	float: left;
+	border-left: 1px solid #BBC1CB;
+}
+
+#menu0 ul li {
+	display: inline;
+}
+
+#menu0 a {
+	border-right: 1px solid #BBC1CB;
+	padding-top: 4px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 6px;
+	float: left;
+}
+
+#menu0 a:link,#menu0 a:visited {
+	text-decoration: none;
+}
+
+#menu0 a:hover {
+	padding-bottom: 2px;
+	border-bottom: 4px solid #7E84BB;
+}
+
+#menu0 .sel a {
+	padding-bottom: 2px;
+	border-bottom: 4px solid #0E1B8D;
+}
+
+/* MENU 1 */
+#menu1 {
+	background-color: #CCCCCC;
+	border-bottom: 1px solid #BBC1CB;
+	margin-top: 12px;
+	margin-bottom: 12px;
+	margin-left: 1px;
+}
+
+#menu1 ul {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+#menu1 ul li {
+	display: block;
+	padding: 4px;
+	padding-left: 12px;
+	margin: 0px;
+	background-color: #FFFFFF;
+	border-top: 1px solid #BBC1CB;
+	border-left: 2px solid #0E1B8D;
+	text-align: left;
+	background-repeat: repeat-y;
+	background-position: left 0px;
+}
+
+#menu1 ul li a {
+	
+}
+
+#menu1 ul li a:link,#menu1 ul li a:visited {
+	text-decoration: none;
+}
+
+#menu1 li.sel {
+	background: none;
+	background-color: #FFFFFF;
+	color: #000000;
+	border-left: 6px solid #0E1B8D;
+	padding-left: 8px;
+}
+
+/* Contenido, Cuerpo y demas
+-------------------------------------------------*/
+.contenido {
+	background-color: #fff;
+	max-width: 1200px;
+	min-width: 790px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 0px;
+	padding-bottom: 12px;
+	padding-left: 4px;
+	width: 790px;
+}
+
+.cuerpo {
+	padding: 5px 4px 10px 4px;
+}
+
+.codigos {
+	font-family: Monaco, Verdana, Sans-serif;
+	font-size: 12px;
+	background-color: #f9f9f9;
+	border: 1px solid #D0D0D0;
+	color: #002166;
+	display: block;
+	margin: 14px 0 14px 0;
+	padding: 12px 10px 12px 10px;
+}
+
+.msj_mensaje {
+	background-color: #E9FFE5;
+	border: 1px solid #1E7A1B;
+	color: #1E7A1B;
+	font-size: 90%;
+	min-width: 200px;
+	padding: 6px 0px 6px 32px;
+	text-align: left;
+	width: 70%;
+}
+
+.msj_error {
+	background-color: #FFE3E2;
+	border: 1px solid #EF0C00;
+	color: #EF0C00;
+	font-size: 90%;
+	margin-left: 6px;
+	min-width: 200px;
+	padding: 6px;
+	padding-left: 32px;
+	text-align: left;
+}
+
+.msj_comentario {
+	background-color: #F5F5F5;
+	border: 1px solid #E3E3E3;
+	padding: 6px 6px 6px 12px;
+	position: relative;
+}
+
+.sinresultado {
+	background-color: #EDEDED;
+	border: 1px solid #a1a1a1;
+	color: #6E6E6E;
+	margin: 6px;
+	padding: 30px;
+	text-align: center;
+}

@@ -1,0 +1,519 @@
+<?php
+
+class Ticket_conciliations_model extends Model {
+
+    const TABLE_NAME = 'ticket_conciliations';
+
+    function __construct() {
+        parent::__construct();
+    }
+
+    public function getData($dateStart, $dateEnd, $transport, $voucher) {
+        $this->load->model('person/person_persons_model');
+
+        $request_requests_table = 'request_requests';
+        $request_tickets_table = 'request_tickets';
+        $conf_costcenters_table = 'conf_costcenters';
+        $ticket_editviazul_table = 'ticket_editviazul';
+        $ticket_editairplane_table = 'ticket_editairplane';
+        $ticket_editship_table = 'ticket_editship';
+        $ticket_conciliations_table = 'ticket_conciliations';
+
+        $today = new Dates();
+        if ($transport == 2) {
+            $id = $ticket_editviazul_table . '.request_id, ';
+            $cheque = $ticket_editviazul_table . '.viazul_voucher as cheque, ';
+            $edited = $ticket_editviazul_table . '.person_ideditedby, ';
+        } elseif ($transport == 3) {
+            $id = $ticket_editairplane_table . '.request_id, ';
+            $cheque = $ticket_editairplane_table . '.airplane_mco as cheque, ';
+            $edited = $ticket_editairplane_table . '.person_ideditedby, ';
+        } else {
+            $id = $ticket_editship_table . '.request_id, ';
+            $cheque = $ticket_editship_table . '.ship_mco as cheque, ';
+            $edited = $ticket_editship_table . '.person_ideditedby, ';
+        }
+        //$request_ids = self::getIds ();
+        //$request_ids = empty ( $request_ids ) ? 0 : $request_ids;
+        $this->db->select($id .
+                self::TABLE_NAME . '.bill_number, ' .
+                $cheque .
+                $request_requests_table . '.person_idworker, ' .
+                $request_requests_table . '.person_idlicensedby, ' .
+                $edited .
+                $conf_costcenters_table . '.center_name , ' .
+                $request_tickets_table . '.ticket_date');
+
+        if ($transport == 2) {
+            $this->db->from($ticket_editviazul_table);
+            $this->db->join($request_tickets_table, $request_tickets_table . '.request_id = ' . $ticket_editviazul_table . '.request_id and '.$request_tickets_table . '.ticket_date = ' . $ticket_editviazul_table . '.ticket_date', 'inner');
+            $this->db->join($request_requests_table, $request_requests_table . '.request_id = ' . $ticket_editviazul_table . '.request_id', 'inner');
+            $this->db->join($ticket_conciliations_table, $ticket_conciliations_table . '.request_id = ' . $ticket_editviazul_table . '.request_id and '.$ticket_conciliations_table . '.ticket_date = ' . $ticket_editviazul_table . '.ticket_date', 'left');
+        } elseif ($transport == 3) {
+            $this->db->from($ticket_editairplane_table);
+            $this->db->join($request_tickets_table, $request_tickets_table . '.request_id = ' . $ticket_editairplane_table . '.request_id and '.$request_tickets_table . '.ticket_date = ' . $ticket_editairplane_table . '.ticket_date', 'inner');
+            $this->db->join($request_requests_table, $request_requests_table . '.request_id = ' . $ticket_editairplane_table . '.request_id', 'inner');
+            $this->db->join($ticket_conciliations_table, $ticket_conciliations_table . '.request_id = ' . $ticket_editairplane_table . '.request_id and '.$ticket_conciliations_table . '.ticket_date = ' . $ticket_editairplane_table . '.ticket_date', 'left');
+        } else {
+            $this->db->from($ticket_editship_table);
+            $this->db->join($request_tickets_table, $request_tickets_table . '.request_id = ' . $ticket_editship_table . '.request_id and '.$request_tickets_table . '.ticket_date = ' . $ticket_editship_table . '.ticket_date', 'inner');
+            $this->db->join($request_requests_table, $request_requests_table . '.request_id = ' . $ticket_editship_table . '.request_id', 'inner');
+            $this->db->join($ticket_conciliations_table, $ticket_conciliations_table . '.request_id = ' . $ticket_editship_table . '.request_idand '.$ticket_conciliations_table . '.ticket_date = ' . $ticket_editship_table . '.ticket_date', 'left');
+        }
+        $this->db->join($conf_costcenters_table, $conf_costcenters_table . '.center_id = ' . $request_requests_table . '.center_id', 'inner');
+        if ($transport == 2) {
+            $this->db->where($ticket_editviazul_table . '.viazul_voucher !=', '');
+            if (!empty($voucher)) {
+                $this->db->where($ticket_editviazul_table . '.viazul_voucher', $voucher);
+            }
+        } elseif ($transport == 3) {
+            $this->db->where($ticket_editairplane_table . '.airplane_mco !=', '');
+            if (!empty($voucher)) {
+                $this->db->where($ticket_editviazul_table . '.airplane_mco', $voucher);
+            }
+        } else {
+            $this->db->where($ticket_editship_table . '.ship_mco !=', '');
+            if (!empty($voucher)) {
+                $this->db->where($ticket_editviazul_table . '.ship_mco', $voucher);
+            }
+        }
+        $this->db->where($request_tickets_table . '.ticket_date >=', $dateStart);
+        $this->db->where($request_tickets_table . '.ticket_date <=', $dateEnd);
+        $this->db->where($request_tickets_table . '.ticket_date <', $today->now());
+        $this->db->order_by('ticket_date', 'desc');
+        $this->db->distinct();
+        $result = $this->db->get();
+        $cant = 0;
+        if ($result->result() != null) {
+            foreach ($result->result() as $row) {
+                $person_namelicensedby = Person_persons_model::getNameById($row->person_idlicensedby);
+                $person_nameeditedby = Person_persons_model::getNameById($row->person_ideditedby);
+                $person_nameworker = Person_persons_model::getNameById($row->person_idworker);
+                $person_identity = Person_persons_model::getIdentityById($row->person_idworker);
+                $value [] = array('request_id' => $row->request_id,
+                    'bill_number' => $row->bill_number,
+                    'cheque' => $row->cheque,
+                    'person_nameworker' => $person_nameworker,
+                    'person_identity' => $person_identity,
+                    'person_namelicensedby' => $person_namelicensedby,
+                    'person_nameeditedby' => $person_nameeditedby,
+                    'center_name' => $row->center_name,
+                    'ticket_date' => $row->ticket_date);
+                $cant++;
+            }
+        } else {
+            $value = array();
+        }
+        echo ("{count : " . $cant . ", data : " . json_encode($value) . "}"); //return $value;
+    }
+
+    public function getDataAccounting($dateStart, $dateEnd, $center, $transport, $motive, $show = false, $isPdf = 'no') {
+        $this->load->model('person/person_persons_model');
+
+        $request_requests_table = 'request_requests';
+        $request_tickets_table = 'request_tickets';
+        $conf_costcenters_table = 'conf_costcenters';
+        $ticket_editviazul_table = 'ticket_editviazul';
+        $ticket_editairplane_table = 'ticket_editairplane';
+        $ticket_editship_table = 'ticket_editship';
+        $ticket_conciliations_table = 'ticket_conciliations';
+        $request_ids = self::getAccountingIds($transport);
+        $request_ids = empty($request_ids) ? 0 : $request_ids;
+        $dateStart = empty($dateStart) ? '1900-01-01' : $dateStart;
+        $dateEnd = empty($dateEnd) ? '1900-01-01' : $dateEnd;
+        if ($transport == 2) {
+            $id = $ticket_editviazul_table . '.request_id, ';
+            $cheque = $ticket_editviazul_table . '.viazul_voucher as cheque, ';
+            $price = $ticket_editviazul_table . '.viazul_price as price, ';
+        } elseif ($transport == 3) {
+            $id = $ticket_editairplane_table . '.request_id, ';
+            $cheque = $ticket_editairplane_table . '.airplane_mco as cheque, ';
+            $price = $ticket_editairplane_table . '.airplane_price as price, ';
+        } else {
+            $id = $ticket_editship_table . '.request_id, ';
+            $cheque = $ticket_editship_table . '.ship_mco as cheque, ';
+            $price = $ticket_editship_table . '.ship_price as price, ';
+        }
+        $this->db->select($id .
+                $cheque .
+                $price .
+                $request_requests_table . '.person_idworker, ' .
+                $request_requests_table . '.person_idlicensedby, ' .
+                $request_requests_table . '.request_details,' .
+                $conf_costcenters_table . '.center_name , ' .
+                $request_tickets_table . '.ticket_date');
+        $this->db->from($request_requests_table);
+        $this->db->join($request_tickets_table, $request_tickets_table . '.request_id = ' . $request_requests_table . '.request_id');
+        if ($transport == 2) {
+            $this->db->join($ticket_editviazul_table, $ticket_editviazul_table . '.request_id = ' . $request_tickets_table . '.request_id AND ' . $ticket_editviazul_table . '.ticket_date = ' . $request_tickets_table . '.ticket_date');
+            $this->db->join($ticket_conciliations_table, $ticket_conciliations_table . '.request_id = ' . $ticket_editviazul_table . '.request_id AND ' . $ticket_conciliations_table . '.ticket_date = ' . $ticket_editviazul_table . '.ticket_date', 'left');
+        } elseif ($transport == 3) {
+            $this->db->join($ticket_editairplane_table, $ticket_editairplane_table . '.request_id = ' . $request_tickets_table . '.request_id AND ' . $ticket_editairplane_table . '.ticket_date = ' . $request_tickets_table . '.ticket_date');
+            $this->db->join($ticket_conciliations_table, $ticket_conciliations_table . '.request_id = ' . $ticket_editairplane_table . '.request_id AND ' . $ticket_conciliations_table . '.ticket_date = ' . $ticket_editairplane_table . '.ticket_date', 'left');
+        } else {
+            $this->db->join($ticket_editship_table, $ticket_editship_table . '.request_id = ' . $request_tickets_table . '.request_id AND ' . $ticket_editship_table . '.ticket_date = ' . $request_tickets_table . '.ticket_date');
+            $this->db->join($ticket_conciliations_table, $ticket_conciliations_table . '.request_id = ' . $ticket_editship_table . '.request_id AND ' . $ticket_conciliations_table . '.ticket_date = ' . $ticket_editship_table . '.ticket_date', 'left');
+        }
+        $this->db->join($conf_costcenters_table, $conf_costcenters_table . '.center_id = ' . $request_requests_table . '.center_id', 'inner');
+        if ($transport == 2) {
+            $this->db->where($ticket_editviazul_table . '.viazul_voucher !=', '');
+        } elseif ($transport == 3) {
+            $this->db->where($ticket_editairplane_table . '.airplane_mco !=', '');
+        } else {
+            $this->db->where($ticket_editship_table . '.ship_mco !=', '');
+        }
+        $this->db->where($request_tickets_table . '.ticket_date >=', $dateStart);
+        $this->db->where($request_tickets_table . '.ticket_date <=', $dateEnd);
+        if (!empty($center)) {
+            $this->db->where($request_requests_table . '.center_id', $center);
+        }
+        if (!empty($motive)) {
+            $this->db->where($request_requests_table . '.motive_id', $motive);
+        }
+        if ($transport == 2) {
+            $this->db->where_in($ticket_editviazul_table . '.request_id ', $request_ids);
+        } elseif ($transport == 3) {
+            $this->db->where_in($ticket_editairplane_table . '.request_id ', $request_ids);
+        } else {
+            $this->db->where_in($ticket_editship_table . '.request_id ', $request_ids);
+        }
+        $result = $this->db->get();
+        $cant = 0;
+        $total = 0;
+        $value = array(); //obligado para el pdf salga
+        if ($result->result() != null) {
+            foreach ($result->result() as $row) {
+                $person_namelicensedby = Person_persons_model::getNameById($row->person_idlicensedby);
+                $person_nameworker = Person_persons_model::getNameById($row->person_idworker);
+                $person_identity = Person_persons_model::getIdentityById($row->person_idworker);
+                $value [] = array('request_id' => $row->request_id,
+                    'viazul_voucher' => $row->cheque,
+                    'viazul_price' => $row->price,
+                    'person_nameworker' => $person_nameworker,
+                    'person_identity' => $person_identity,
+                    'person_namelicensedby' => $person_namelicensedby,
+                    'request_details' => $row->request_details,
+                    'center_name' => $row->center_name,
+                    'ticket_date' => $row->ticket_date);
+                $cant++;
+                $total = $total + $row->price;
+            }
+            $last = array();
+            $last [] = array('request_id' => '',
+                'viazul_voucher' => 'TOTAL',
+                'viazul_price' => $total,
+                'person_nameworker' => '',
+                'person_identity' => '',
+                'person_namelicensedby' => '',
+                'request_details' => '',
+                'center_name' => '',
+                'ticket_date' => '');
+            $value = array_merge((array) $value, (array) $last);
+        } else {
+            $value = array();
+        }
+
+        if ($isPdf == 'si') { //devuelve todos por exceso
+            return $value;
+        } else { //el cant es filtrado
+            echo ("{count : " . $cant . ", data : " . json_encode($value) . "}"); // este valor se le asigna al return del setDatagridconditional para pasarle
+        }
+    }
+
+    public function getDataCociliation($bill = '', /* $province = '', $center = '', $motive = '', */ $show = false, $isPDF = 'no') {
+        $this->load->model('person/person_persons_model');
+        $this->load->model('conf/conf_costcenters_model');
+        $this->load->model('conf/conf_provinces_model');
+        $request_requests_table = 'request_requests';
+        $request_tickets_table = 'request_tickets';
+        $ticket_editviazul_table = 'ticket_editviazul';
+        $this->db->select(self::TABLE_NAME . '.id, ' .
+                self::TABLE_NAME . '.bill_number, ' .
+                self::TABLE_NAME . '.request_id, ' .
+                self::TABLE_NAME . '.ticket_date, ' .
+                $request_requests_table . '.request_inversiontask, ' .
+                $request_requests_table . '.request_details,' .
+                $request_requests_table . '.person_idlicensedby, ' .
+                $request_requests_table . '.center_id, ' .
+                $request_requests_table . '.person_idworker, ' .
+                $request_tickets_table . '.province_idfrom, ' .
+                $request_tickets_table . '.province_idto, ' .
+                $ticket_editviazul_table . '.viazul_voucher, ' .
+                $ticket_editviazul_table . '.viazul_price');
+        $this->db->from(self::TABLE_NAME);
+        $this->db->join($ticket_editviazul_table, $ticket_editviazul_table . '.request_id = ' . self::TABLE_NAME . '.request_id AND ' . $ticket_editviazul_table . '.ticket_date = ' . self::TABLE_NAME . '.ticket_date', 'left');
+        $this->db->join($request_tickets_table, $request_tickets_table . '.request_id = ' . $ticket_editviazul_table . '.request_id AND ' . $request_tickets_table . '.ticket_date = ' . $ticket_editviazul_table . '.ticket_date', 'left');
+        $this->db->join($request_requests_table, $request_requests_table . '.request_id = ' . $request_tickets_table . '.request_id', 'left');
+        $this->db->where(self::TABLE_NAME . '.bill_number', $bill);
+
+        /* if (!empty($province)) {
+          $this->db->where($request_lodgings_table . '.province_idlodging =', $province);
+          }
+          if (!empty($center)) {
+          $this->db->where(request_tickets_table . '.center_id', $center);
+          } */
+        $this->db->order_by($ticket_editviazul_table . '.viazul_voucher', 'asc');
+        $result = $this->db->get();
+        $cant = 0;
+        $total = 0;
+        if ($result->result() != null) {
+            $value = array();
+            foreach ($result->result() as $row) {
+                $person_worker = Person_persons_model::getNameById($row->person_idworker);
+                $person_identity = Person_persons_model::getIdentityById($row->person_idworker);
+                $person_licensedby = Person_persons_model::getNameById($row->person_idlicensedby);
+                $province_idfrom = Conf_provinces_model::getNameById($row->province_idfrom);
+                $province_idto = Conf_provinces_model::getNameById($row->province_idto);
+                $center_name = Conf_costcenters_model::getNameById($row->center_id);
+                $value [] = array('request_id' => $row->request_id,
+                    'bill_number' => $row->bill_number,
+                    'id' => $row->id,
+                    'person_licensedby' => $person_licensedby,
+                    'request_inversiontask' => $row->request_inversiontask,
+                    'ticket_date' => $row->ticket_date,
+                    'center_name' => $center_name,
+                    'person_worker' => $person_worker,
+                    'person_identity' => $person_identity,
+                    'request_details' => $row->request_details,
+                    'province_idfrom' => $province_idfrom,
+                    'province_idto' => $province_idto,
+                    'total' => $row->viazul_price
+                );
+                $total += $row->viazul_price;
+                $cant++;
+            }
+            $last = array();
+            $last [] = array('request_id' => '',
+                'bill_number' => 'TOTAL',
+                'id' => '',
+                'person_licensedby' => '',
+                'request_inversiontask' => '',
+                'ticket_date' => '',
+                'center_name' => '',
+                'person_worker' => '',
+                'person_identity' => '',
+                'request_details' => '',
+                'province_idfrom' => '',
+                'province_idto' => '',
+                'total' => $total);
+            $value = array_merge((array) $value, (array) $last);
+            if ($isPDF == 'si') {
+                return $value;
+            } else {
+                echo ("{count : " . $cant . ", data : " . json_encode($value) . "}");
+            }
+        }
+    }
+    
+    public function getDataCociliationToExcel($bill = '', /* $province = '', $center = '', $motive = '', */ $show = false, $isPDF = 'no') {
+        $this->load->model('person/person_persons_model');
+        $this->load->model('conf/conf_costcenters_model');
+        $this->load->model('conf/conf_provinces_model');
+        $request_requests_table = 'request_requests';
+        $request_tickets_table = 'request_tickets';
+        $ticket_editviazul_table = 'ticket_editviazul';
+        $this->db->select(self::TABLE_NAME . '.id, ' .
+                self::TABLE_NAME . '.bill_number, ' .
+                self::TABLE_NAME . '.request_id, ' .
+                self::TABLE_NAME . '.ticket_date, ' .
+                $request_requests_table . '.request_inversiontask, ' .
+                $request_requests_table . '.request_details,' .
+                $request_requests_table . '.person_idlicensedby, ' .
+                $request_requests_table . '.center_id, ' .
+                $request_requests_table . '.person_idworker, ' .
+                $request_tickets_table . '.province_idfrom, ' .
+                $request_tickets_table . '.province_idto, ' .
+                $ticket_editviazul_table . '.viazul_voucher, ' .
+                $ticket_editviazul_table . '.viazul_price');
+        $this->db->from(self::TABLE_NAME);
+        $this->db->join($ticket_editviazul_table, $ticket_editviazul_table . '.request_id = ' . self::TABLE_NAME . '.request_id AND ' . $ticket_editviazul_table . '.ticket_date = ' . self::TABLE_NAME . '.ticket_date', 'left');
+        $this->db->join($request_tickets_table, $request_tickets_table . '.request_id = ' . $ticket_editviazul_table . '.request_id AND ' . $request_tickets_table . '.ticket_date = ' . $ticket_editviazul_table . '.ticket_date', 'left');
+        $this->db->join($request_requests_table, $request_requests_table . '.request_id = ' . $request_tickets_table . '.request_id', 'left');
+        $this->db->where(self::TABLE_NAME . '.bill_number', $bill);
+
+        /* if (!empty($province)) {
+          $this->db->where($request_lodgings_table . '.province_idlodging =', $province);
+          }
+          if (!empty($center)) {
+          $this->db->where(request_tickets_table . '.center_id', $center);
+          } */
+        $this->db->order_by($ticket_editviazul_table . '.viazul_voucher', 'asc');
+        return $this->db->get();
+        
+    }
+    
+
+    /**
+     * funcion que devuelve la cantidad de registros en la tabla
+     *
+     */
+    public function getCant() {
+        return $this->db->count_all(self::TABLE_NAME);
+    }
+
+    /**
+     * Esta es la funcion encargada de insertar
+     *
+     * @return boolean
+     */
+    public function insert($request_id, $bill_number, $ticket_date) {
+        $conciliation ['request_id'] = $request_id;
+        $conciliation ['bill_number'] = $bill_number;
+        $conciliation ['ticket_date'] = $ticket_date;
+
+        $flag = self::getCountById($request_id, $ticket_date);
+        if ($flag > 0) {
+            return "false";
+        } else {
+            $this->db->trans_begin();
+            $re = $this->db->insert(self::TABLE_NAME, $conciliation);
+            $logs = new Logs ( );
+            $myquery = $logs->sqlinsert(self::TABLE_NAME, $conciliation);
+            $logs->write(self::TABLE_NAME, 'INSERT', $myquery);
+
+            if ($this->db->trans_status() === FALSE) {
+                $this->db->trans_rollback();
+            } else {
+                $this->db->trans_commit();
+            }
+            if ($re == true)
+                return "true";
+            else
+                return "false";
+        }
+    }
+
+    /**
+     * Funcion para eliminar una provincia por su nombre
+     *
+     * @param string $requestservice_name
+     */
+    public function delete($request_id) {
+        $this->db->where('request_id', $request_id);
+        $this->db->trans_begin();
+        $this->db->delete(self::TABLE_NAME);
+        $logs = new Logs ( );
+        $mywhere = 'where request_id = ' . $request_id;
+        $myquery = $logs->sqldelete(self::TABLE_NAME, $mywhere);
+        $logs->write(self::TABLE_NAME, 'DELETE', $myquery);
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+        } else {
+            $this->db->trans_commit();
+        }
+    }
+
+    public function getIds() {
+        $this->db->select('request_id');
+        $this->db->from(self::TABLE_NAME);
+        $result = $this->db->get();
+        $value = array();
+        $cant = 0;
+        if ($result->result() != null) {
+            foreach ($result->result() as $row) {
+                $value [$cant] = $row->request_id;
+                $cant++;
+            }
+        }
+        return $value;
+    }
+
+    public function getAccountingIds($transport) {
+        $this->db->select('request_id');
+        if ($transport == 2) {
+            $this->db->from('ticket_editviazul');
+        } elseif ($transport == 3) {
+            $this->db->from('ticket_editairplane');
+        } else {
+            $this->db->from('ticket_editship');
+        }
+        $result = $this->db->get();
+        $value = array();
+        $cant = 0;
+        if ($result->result() != null) {
+            foreach ($result->result() as $row) {
+                $value [$cant] = $row->request_id;
+                $cant++;
+            }
+        }
+        return $value;
+    }
+
+    public function getById($request_id) {
+        $this->load->model('conf/conf_provinces_model');
+        $this->load->model('person/person_persons_model');
+        $this->load->model('ticket/ticket_requests_model');
+        $this->load->model('conf/conf_costcenters_model');
+        $this->load->model('conf/conf_motives_model');
+        $this->load->model('conf/conf_tickettransports_model');
+        $this->load->model('conf/conf_ticketviazulstates_model');
+        $count = self::getCountById($request_id);
+        $query = 'ticket_requests.request_id, 
+							ticket_requests.request_date, 
+							ticket_requests.request_exitdate, 
+							ticket_requests.request_returndate,
+							ticket_requests.person_idrequestedby, 
+							conf_costcenters.center_name,
+							conf_tickettransports.transport_name,
+							ticket_requests.person_idworker,
+							ticket_requests.province_idfrom,
+							ticket_requests.province_idto,
+							conf_motives.motive_name';
+        if ($count > 0) {
+            $editviazul = ',ticket_editviazul.viazul_voucher,
+	        				ticket_editviazul.viazul_exithour,
+							ticket_editviazul.viazul_arrivalhour,
+							ticket_editviazul.viazul_price,
+							ticket_editviazul.viazulstate_id';
+            $query = $query . $editviazul;
+        }
+        $this->db->select($query);
+        $this->db->from(Ticket_requests_model::TABLE_NAME);
+        $this->db->join(Conf_costcenters_model::TABLE_NAME, Conf_costcenters_model::TABLE_NAME . '.center_id = ' . Ticket_requests_model::TABLE_NAME . '.center_id', 'inner');
+        $this->db->join(Conf_tickettransports_model::TABLE_NAME, Conf_tickettransports_model::TABLE_NAME . '.transport_id = ' . Ticket_requests_model::TABLE_NAME . '.transport_id', 'inner');
+        $this->db->join(Conf_motives_model::TABLE_NAME, Conf_motives_model::TABLE_NAME . '.motive_id = ' . Ticket_requests_model::TABLE_NAME . '.motive_id', 'inner');
+        if ($count > 0) {
+            $this->db->join(self::TABLE_NAME, self::TABLE_NAME . '.request_id = ' . Ticket_requests_model::TABLE_NAME . '.request_id', 'inner');
+            $this->db->join(Conf_ticketviazulstates_model::TABLE_NAME, Conf_ticketviazulstates_model::TABLE_NAME . '.viazulstate_id = ' . self::TABLE_NAME . '.viazulstate_id', 'inner');
+        }
+        $this->db->where(Ticket_requests_model::TABLE_NAME . '.request_id', $request_id);
+        $result = $this->db->get();
+        if ($result->result() != null) {
+            foreach ($result->result() as $row) {
+                $person_namerequestedby = Person_persons_model::getNameById($row->person_idrequestedby);
+                $person_nameworker = Person_persons_model::getNameById($row->person_idworker);
+                if ($count > 0) {
+                    if (is_null($row->viazul_exithour)) {
+                        $viazul_exithour = $row->viazul_exithour;
+                    } else {
+                        $viazul_exithour = substr($row->viazul_exithour, 0, 5);
+                    }
+                    if (is_null($row->viazul_arrivalhour)) {
+                        $viazul_arrivalhour = $row->viazul_arrivalhour;
+                    } else {
+                        $viazul_arrivalhour = substr($row->viazul_arrivalhour, 0, 5);
+                    }
+
+                    $value [] = array('request_id' => $row->request_id, 'request_date' => $row->request_date, 'request_exitdate' => $row->request_exitdate, 'request_returndate' => $row->request_returndate, 'person_namerequestedby' => $person_namerequestedby, 'center_name' => $row->center_name, 'transport_name' => $row->transport_name, 'person_nameworker' => $person_nameworker, 'province_idfrom' => $row->province_idfrom, 'province_idto' => $row->province_idto, 'motive_name' => $row->motive_name, 'viazul_voucher' => $row->viazul_voucher, 'viazul_exithour' => $viazul_exithour, 'viazul_arrivalhour' => $viazul_arrivalhour, 'viazul_price' => $row->viazul_price, 'viazulstate_id' => $row->viazulstate_id);
+                } else {
+                    $value [] = array('request_id' => $row->request_id, 'request_date' => $row->request_date, 'request_exitdate' => $row->request_exitdate, 'request_returndate' => $row->request_returndate, 'person_namerequestedby' => $person_namerequestedby, 'center_name' => $row->center_name, 'transport_name' => $row->transport_name, 'person_nameworker' => $person_nameworker, 'province_idfrom' => $row->province_idfrom, 'province_idto' => $row->province_idto, 'motive_name' => $row->motive_name);
+                }
+            }
+        } else {
+            $value = array();
+        }
+        return $value;
+    }
+
+    public function getCountById($request_id, $ticket_date) {
+        $this->db->select('request_id');
+        $this->db->from(self::TABLE_NAME);
+        $this->db->where('request_id', $request_id);
+        $this->db->where('ticket_date', $ticket_date);
+        return $this->db->count_all_results();
+    }
+
+}
+
+?>

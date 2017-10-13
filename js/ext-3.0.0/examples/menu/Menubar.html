@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Application Menubar with Menus</title>
+
+<!-- Ext Files -->
+<link rel="stylesheet" type="text/css"
+	href="../../resources/css/ext-all.css" />
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../../ext-all.js"></script>
+
+<!-- Global Demo Files -->
+<link rel="stylesheet" type="text/css" href="global.css" />
+
+<!-- Widget Files -->
+<link rel="stylesheet" type="text/css" href="Menubar.css" />
+<script type="text/javascript" src="Menubar.js"></script>
+
+<script type="text/javascript">
+        /* Example Script */
+        Ext.BLANK_IMAGE_URL = "../../resources/images/default/s.gif"
+        
+        Ext.onReady(function() {
+            FullMenuBar = new Ext.ux.Menubar({
+                orientation: "horizontal"
+            });
+
+            FullMenuBar.add(
+                new Ext.menu.Item( {
+                    text: 'Home', href:"#home"}
+                    ),        
+                new Ext.menu.Item( {
+                    hideOnClick : false,
+                    text: 'Static Data',menu : new Ext.menu.Menu({id:'foo', items: [
+                        {href:"#Company",text:"Companies"},
+                        {href:"#Component",text:"House Components"},
+                        {href:"#PlayerType",text:"Player Types"},
+                        {text: 'Submenus',menu : {items: [
+                            {href:"#AppClass",text:"Application Classes"},
+                            {href:"#AppComponent",text:"Application Components"}
+                        ]}},                        
+                        {href:"#Access 1",text:"Access level 1", level: 1},
+                        {href:"#Access 2",text:"Access level 2", level: 2},
+                        {href:"#Access 3",text:"Access level 3", level: 3}
+                    ]})}),
+                new Ext.menu.Item( {
+                    text: 'Application Data(1)', level: 1, menu : {items: [
+                        {href:"#AppTaxNoValidation",text:"Tax No Validations"},
+                        {href:"#AppClass",text:"Application Classes"},
+                        {href:"#AppComponent",text:"Application Components"}
+                    ]}}),
+                new Ext.menu.Item({
+                    text: 'Align Right', align: 'right', menu : {items: [
+                        {href:"#AppClass",text:"Application Classes"},
+                        {href:"#EconomicGroup",text:"Economic Groups"},
+                        {href:"#Language",text:"Languages"},
+                        {text: 'Submenus',menu : {items: [
+                            {href:"#AppClass",text:"Application Classes"},
+                            {href:"#AppComponent",text:"Application Components"}
+                        ]}},
+                        {href:"#Market",text:"Markets"},
+                        {href:"#Menu",text:"Main Menu Groupings"},
+                        {href:"#Player",text:"Supply-Chain Players"},
+                        {href:"#PlayerType",text:"Player Types"}
+                    ]}}),
+                new Ext.menu.Item({
+                    text: 'Test Menu(2)', level: 2, align: 'right', menu : {items: [
+                        {href:"#AppClass",text:"Application Classes"},
+                        {href:"#EconomicGroup",text:"Economic Groups"},
+                        {href:"#Language",text:"Languages"},
+                        {href:"#Market",text:"Markets"},
+                        {href:"#Menu",text:"Main Menu Groupings"},
+                        {href:"#Player",text:"Supply-Chain Players"},
+                        {href:"#PlayerType",text:"Player Types"}
+                ]}})
+            );
+            FullMenuBar.show(Ext.get("app-menubar"), "bl-bl");
+            
+            SmallMenuBar = new Ext.ux.Menubar({
+                orientation: "horizontal"
+            });
+
+            SmallMenuBar.add(
+            new Ext.menu.Item( {
+                text: 'Home', href:"#AppTaxNoValidation"}
+                ),        
+            new Ext.menu.Item( {
+                hideOnClick : false,
+                text: 'Static Data',menu : new Ext.menu.Menu({id:'foo', items: [
+                    {href:"#Company",text:"Companies"},
+                    {href:"#Component",text:"House Components"},
+                    {href:"#PlayerType",text:"Player Types"}
+                ]})})
+            );    
+            SmallMenuBar.show(Ext.get("container-menubar"), "tl-tl");
+                
+        });
+            
+        function HideItems(menu, level) {
+            //console.log(menu);
+            var a = menu.items.items;       
+            //console.log(a); 
+            for(var i=0; i<a.length; i++){
+                if(a[i]) {
+                    if(a[i].level === undefined || a[i].level <= level) {
+                        a[i].show();
+                    } else {
+                        a[i].hide();
+                    }
+
+                    if(a[i].menu){
+                        HideItems(a[i].menu, level);
+                    }
+                }
+            }
+        } 
+    </script>
+
+<style type="text/css">
+/* Example Styles */
+</style>
+
+</head>
+<body>
+
+<div id="app-menubar"></div>
+
+<div class="container">
+
+<div class="summary">
+<h1>Application Menubar with Menus</h1>
+<dt>Current Version:</dt>
+<dd>0.6.1 (Rev 13)</dd>
+
+<dt>Published:</dt>
+<dd>14-07-2007 (11:14)</dd>
+<a class="link wiki" href="http://extjs.com/learn/Extension:MenuBar">View
+Description (wiki)</a><br />
+<a class="link download" href="?download">Download Package</a><br />
+<div style="height: 5px"></div>
+<a href="../../manager/source.php?f=menubar/Menubar.js"
+	class="link source js">View Menubar.js</a><br />
+
+<a href="../../manager/source.php?f=menubar/Menubar.css"
+	class="link source css">View Menubar.css</a><br />
+<a href="menubar-parent.gif" class="link source other">View
+menubar-parent.gif</a><br />
+</div>
+
+
+<div>
+<h1>Hide items example</h1>
+<p>In some cases it might be convenient to hide certain menu items
+(for example when loggin in or out). For demo see page source.</p>
+
+<p><a href="#" onclick="HideItems(FullMenuBar, 0);">Hide Items
+&gt;0</a><br />
+<a href="#" onclick="HideItems(FullMenuBar, 1);">Hide Items &gt;1</a><br />
+<a href="#" onclick="HideItems(FullMenuBar, 2);">Hide Items &gt;2</a><br />
+<a href="#" onclick="HideItems(FullMenuBar, 3);">Hide Items &gt;3</a><br />
+
+</p>
+</div>
+
+<div
+	style="margin: 30px 100px; width: 500px; border: 1px solid #6593CF; border-bottom: 0;">
+<div style="padding: 3px">This is a container with a menubar</div>
+<div id="container-menubar" style=""></div>
+</div>
+
+</div>
+
+</body>
+</html>
