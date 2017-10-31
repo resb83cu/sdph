@@ -338,14 +338,17 @@ Ext.onReady(function() {
             handler: function(){
                 array = sm2.getSelections();
                 var len = array.length;
-                id = array[0].get('request_id');
-                date = array[0].get('ticket_date');
-                if (len > 1){
-                    Ext.MessageBox.alert('Error', 'Debe seleccionar un solo pasaje para mostrar su informaci&oacute;n.');
+                if (len < 1){
+                    Ext.MessageBox.alert('Error', 'Debe seleccionar al menos un pasaje para mostrar la informaci&oacute;n.');
                     sm2.clearSelections();
                     return false;
                 } else {
-                    Viazul.filterForm.getForm().getEl().dom.action = baseUrl+'index.php/ticket/ticket_editviazul/viazulPdf/'+id+'/'+date ;
+                //    Viazul.filterForm.getForm().getEl().dom.action = baseUrl+'index.php/ticket/ticket_editviazul/viazulPdf/'+id+'/'+date ;
+                    var requests = [];
+                    for (var i = 0, len = array.length; i < len; i++) {
+                        requests.push(array[i].get('request_id') + "|" + array[i].get('ticket_date'));
+                    }
+                    Viazul.filterForm.getForm().getEl().dom.action = baseUrl+'index.php/ticket/ticket_editviazul/testArray/'+requests;
                     Viazul.filterForm.getForm().getEl().dom.method = 'POST';
                     Viazul.filterForm.getForm().submit();							
                 }
@@ -620,11 +623,11 @@ Ext.onReady(function() {
         ]);
 	    
         formReader = new Ext.data.JsonReader({
-            root : 'data',
-            successProperty : 'success',
-            totalProperty: 'count',
-            id: 'request_id'
-        },recordUpdate
+                root : 'data',
+                successProperty : 'success',
+                totalProperty: 'count',
+                id: 'request_id'
+            },recordUpdate
         );
 	
    

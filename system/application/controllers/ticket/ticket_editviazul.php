@@ -101,6 +101,102 @@ class Ticket_editviazul extends Controller {
         //echo "<pre>"; print_r($data); echo "</pre>";
     }
 
+    function testArray($requests) {
+//        die("{data : " . json_encode($requests) . "}");
+        $results = explode(",", $requests);
+        $this->load->library('FPDF/pdf_request');
+        $pdf = new Pdf_request('L', 'mm', 'Letter');
+
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', 'B', 12);
+
+        $pdf->Ln(5);
+        $pdf->SetFillColor(255, 255, 255);
+
+        $str = iconv('UTF-8', 'windows-1252', 'DATOS DEL  PERSONAL AUTORIZADO A VIAJAR');
+        $pdf->Cell(80, 7, $str, '', '', '', true);
+        $pdf->SetFont('Arial', '', 12);
+
+        $pdf->Ln();
+        $pdf->Ln(20);
+        $pdf->SetFillColor(255, 255, 255);
+
+        $pdf->SetFont('Arial', '', 10);
+
+        $pdf->Cell(60, 7, 'Nombre y Apellidos', 1, '', 'C', true);
+        $pdf->Cell(25, 7, 'C.I', 1, '', 'C', true);
+        $pdf->Cell(38, 7, 'Provincia', 1, '', 'C', true);
+        $pdf->Cell(20, 7, 'Fecha Viaje', 1, '', 'C', true);
+        $pdf->Cell(30, 7, 'Origen', 1, '', 'C', true);
+        $pdf->Cell(30, 7, 'Destino.', 1, '', 'C', true);
+        $pdf->Cell(40, 7, 'Presupuesto.', 1, '', 'C', true);
+
+        $pdf->Ln(7);
+
+        foreach ($results as $row) {
+            $item = explode("|", $row);
+            $this->viazulPdfTest($item[0], $item[1], $pdf);
+        }
+        $pdf->Output('Solicitud probando.pdf', 'D');
+
+    }
+
+    function viazulPdfTest($request_id, $ticket_date, $pdf) {
+        $data = $this->conn->getById($request_id, $ticket_date);
+        $count = count($data);
+        if ($count == 0) {
+            return "{success: false, errors: { reason: 'Error al generar la solicitud. Por favor intente de nuevo.' }}";
+        }
+
+
+        $request_date = $data [0] ['request_date'];
+        $ticket_date = $data [0] ['ticket_date'];
+        $person_namerequestedby = $data [0] ['person_namerequestedby'];
+        $person_namelicensedby = $data [0] ['person_namelicensedby'];
+        $center_name = $data [0] ['center_name'];
+        $transport_name = $data [0] ['transport_name'];
+        $person_nameworker = $data [0] ['person_nameworker'];
+        $person_identity = $data [0] ['person_identity'];
+        $person_province = $data [0] ['person_province'];
+        $province_namefrom = $data [0] ['province_namefrom'];
+        $province_nameto = $data [0] ['province_nameto'];
+        $motive_name = $data [0] ['motive_name'];
+        $request_details = $data [0] ['request_details'];
+
+//        $str = iconv('UTF-8', 'windows-1252', 'Persona que Autoriza: ' . $person_namelicensedby);
+//        $pdf->Cell(120, 7, $str, '', '', '', true);
+//        $pdf->Ln(12);
+//        $str = iconv('UTF-8', 'windows-1252', 'Persona que introdujo la solicitud: ' . $person_namerequestedby);
+//        $pdf->Cell(120, 7, $str, '', '', '', true);
+//        $pdf->Ln(12);
+//        $str = iconv('UTF-8', 'windows-1252', 'Fecha de solicitud: ' . $request_date);
+//        $pdf->Cell(120, 7, $str, '', '', '', true);
+//        $pdf->Ln(12);
+//        $str = iconv('UTF-8', 'windows-1252', 'Fecha de viaje: ' . $ticket_date);
+//        $pdf->Cell(120, 7, $str, '', '', '', true);
+//        $pdf->Ln(20);
+
+        //aqui se hace el for
+
+        $str = iconv('UTF-8', 'windows-1252', $person_nameworker);
+        $pdf->Cell(60, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', $person_identity);
+        $pdf->Cell(25, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', $person_province);
+        $pdf->Cell(38, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', $ticket_date);
+        $pdf->Cell(20, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', $province_namefrom);
+        $pdf->Cell(30, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', $province_nameto);
+        $pdf->Cell(30, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', $center_name);
+        $pdf->Cell(40, 7, $str, 1, '', 'L', true);
+
+        $pdf->Ln(7);
+
+    }
+
     function viazulPdf($request_id, $ticket_date) {
         $centinela = new Centinela ( );
         $flag = $centinela->accessTo('ticket/ticket_editviazul');

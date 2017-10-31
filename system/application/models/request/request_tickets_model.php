@@ -33,6 +33,7 @@ class Request_tickets_model extends Model {
 							request_tickets.province_idto,
 							request_tickets.ticket_state,
 							ticket_editviazul.viazulstate_id,
+							ticket_editviazul.ticket_viazul_id,
 							request_tickets.ticket_cancel');
         $this->db->from($request_requests_table);
         $this->db->join(self::TABLE_NAME, self::TABLE_NAME . '.request_id = ' . $request_requests_table . '.request_id', 'inner');
@@ -47,7 +48,9 @@ class Request_tickets_model extends Model {
             $where = "(request_tickets.province_idfrom = " . $centinela->get_province_id() . " OR request_tickets.province_idto = " . $centinela->get_province_id() . ")";
             $this->db->where($where);
         }
-        $this->db->order_by('request_tickets.ticket_date', 'desc');
+        $this->db->order_by('request_tickets.ticket_date', 'asc');
+        $this->db->order_by('request_tickets.province_idfrom', 'asc');
+        $this->db->order_by('request_tickets.province_idto', 'asc');
         $this->db->limit($to, $from);
         $this->db->distinct();
         $result = $this->db->get();
