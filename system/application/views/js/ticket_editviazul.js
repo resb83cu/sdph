@@ -850,7 +850,6 @@ Ext.onReady(function() {
                                     buttons: Ext.MessageBox.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
-                                responseData = Ext.util.JSON.decode(request.response.responseText);
                                 updateForm.getForm().reset();
                                 updateWindow.destroy();
                                 sm2.clearSelections();
@@ -885,11 +884,10 @@ Ext.onReady(function() {
                                     buttons: Ext.MessageBox.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
-                                responseData = Ext.util.JSON.decode(request.response.responseText);
+                                viazulDataStore.load();
                                 updateForm.getForm().reset();
                                 updateWindow.destroy();
                                 sm2.clearSelections();
-                                viazulDataStore.load();
                             }
                         });					
                     }
@@ -942,8 +940,8 @@ Ext.onReady(function() {
                                 buttons: Ext.MessageBox.OK,
                                 icon: Ext.MessageBox.ERROR
                             });
-                            sm2.clearSelections();
                             viazulDataStore.load();
+                            sm2.clearSelections();
                         },
                         success: function (form, request) {
                             Ext.MessageBox.show({
@@ -953,11 +951,10 @@ Ext.onReady(function() {
                                 buttons: Ext.MessageBox.OK,
                                 icon: Ext.MessageBox.INFO
                             });
-                            responseData = Ext.util.JSON.decode(request.response.responseText);
                             updateForm.getForm().reset();
-                            updateWindow.destroy();
                             sm2.clearSelections();
                             viazulDataStore.load();
+                            updateWindow.destroy();
                         }
                     });					
                 }
@@ -971,6 +968,7 @@ Ext.onReady(function() {
             text : 'Cancelar',
             disabled : false,
             handler : function() {
+                viazulDataStore.load();
                 updateForm.getForm().reset();
                 updateWindow.destroy();
                 sm2.clearSelections();
