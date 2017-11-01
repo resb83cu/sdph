@@ -101,8 +101,8 @@ class Ticket_editviazul extends Controller {
         //echo "<pre>"; print_r($data); echo "</pre>";
     }
 
-    function testArray($requests) {
-//        die("{data : " . json_encode($requests) . "}");
+    function viazulPdfMultiple($requests) {
+        $centinela = new Centinela ( );
         $results = explode(",", $requests);
         $this->load->library('FPDF/pdf_request');
         $pdf = new Pdf_request('L', 'mm', 'Letter');
@@ -113,7 +113,7 @@ class Ticket_editviazul extends Controller {
         $pdf->Ln(5);
         $pdf->SetFillColor(255, 255, 255);
 
-        $str = iconv('UTF-8', 'windows-1252', 'DATOS DEL  PERSONAL AUTORIZADO A VIAJAR');
+        $str = iconv('UTF-8', 'windows-1252', 'DATOS DEL PERSONAL AUTORIZADO A VIAJAR');
         $pdf->Cell(80, 7, $str, '', '', '', true);
         $pdf->SetFont('Arial', '', 12);
 
@@ -130,18 +130,24 @@ class Ticket_editviazul extends Controller {
         $pdf->Cell(30, 7, 'Origen', 1, '', 'C', true);
         $pdf->Cell(30, 7, 'Destino.', 1, '', 'C', true);
         $pdf->Cell(40, 7, 'Presupuesto.', 1, '', 'C', true);
+        $pdf->Cell(20, 7, 'Importe', 1, '', 'C', true);
 
         $pdf->Ln(7);
-
+        $total = 0;
         foreach ($results as $row) {
             $item = explode("|", $row);
-            $this->viazulPdfTest($item[0], $item[1], $pdf);
+            $this->viazulPdfRow($item[0], $item[1], $pdf, $total);
         }
-        $pdf->Output('Solicitud probando.pdf', 'D');
+
+        $pdf->Cell(203, 7, '', 0, '', 'C', true);
+        $pdf->Cell(40, 7, 'Importe Total', 1, '', 'L', true);
+        $pdf->Cell(20, 7, number_format($total,2,",","."), 1, '', 'R', true);
+
+        $pdf->Output('Viazul - Datos del personal autorizado a viajar -'.$centinela->get_person_fullname().' - '.$centinela->today().'.pdf', 'D');
 
     }
 
-    function viazulPdfTest($request_id, $ticket_date, $pdf) {
+    function viazulPdfRow($request_id, $ticket_date, $pdf, &$total) {
         $data = $this->conn->getById($request_id, $ticket_date);
         $count = count($data);
         if ($count == 0) {
@@ -162,6 +168,7 @@ class Ticket_editviazul extends Controller {
         $province_nameto = $data [0] ['province_nameto'];
         $motive_name = $data [0] ['motive_name'];
         $request_details = $data [0] ['request_details'];
+        $viazul_price = $data [0] ['viazul_price'];
 
 //        $str = iconv('UTF-8', 'windows-1252', 'Persona que Autoriza: ' . $person_namelicensedby);
 //        $pdf->Cell(120, 7, $str, '', '', '', true);
@@ -192,8 +199,12 @@ class Ticket_editviazul extends Controller {
         $pdf->Cell(30, 7, $str, 1, '', 'L', true);
         $str = iconv('UTF-8', 'windows-1252', $center_name);
         $pdf->Cell(40, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', number_format($viazul_price,2,",","."));
+        $pdf->Cell(20, 7, $str, 1, '', 'R', true);
 
         $pdf->Ln(7);
+
+        $total += $viazul_price;
 
     }
 
