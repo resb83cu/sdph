@@ -105,7 +105,7 @@ class Ticket_editviazul extends Controller {
         $centinela = new Centinela ( );
         $results = explode(",", $requests);
         $this->load->library('FPDF/pdf_request');
-        $pdf = new Pdf_request('L', 'mm', 'Letter');
+        $pdf = new Pdf_request('L', 'mm', 'A4');
 
         $pdf->AddPage();
         $pdf->SetFont('Arial', 'B', 12);
@@ -113,23 +113,31 @@ class Ticket_editviazul extends Controller {
         $pdf->Ln(5);
         $pdf->SetFillColor(255, 255, 255);
 
+        $pdf->Ln(12);
         $str = iconv('UTF-8', 'windows-1252', 'DATOS DEL PERSONAL AUTORIZADO A VIAJAR');
-        $pdf->Cell(80, 7, $str, '', '', '', true);
+        $pdf->Cell(300, 7, $str, '', '', 'C', true);
         $pdf->SetFont('Arial', '', 12);
 
-        $pdf->Ln();
-        $pdf->Ln(20);
+        $pdf->Ln(12);
         $pdf->SetFillColor(255, 255, 255);
 
         $pdf->SetFont('Arial', '', 10);
 
-        $pdf->Cell(60, 7, 'Nombre y Apellidos', 1, '', 'C', true);
+        $str = iconv('UTF-8', 'windows-1252', 'Persona que Imprime: ' . $centinela->get_person_fullname());
+        $pdf->Cell(120, 7, $str, '', '', '', true);
+        $pdf->Ln(8);
+        $str = iconv('UTF-8', 'windows-1252', 'Voucher: ');
+        $pdf->Cell(120, 7, $str, '', '', '', true);
+        $pdf->Ln(10);
+
+        $pdf->Cell(20, 7, 'Cosecutivo', 1, '', 'C', true);
+        $pdf->Cell(55, 7, 'Nombre y Apellidos', 1, '', 'C', true);
         $pdf->Cell(25, 7, 'C.I', 1, '', 'C', true);
-        $pdf->Cell(38, 7, 'Provincia', 1, '', 'C', true);
+        $pdf->Cell(30, 7, 'Provincia', 1, '', 'C', true);
         $pdf->Cell(20, 7, 'Fecha Viaje', 1, '', 'C', true);
         $pdf->Cell(30, 7, 'Origen', 1, '', 'C', true);
         $pdf->Cell(30, 7, 'Destino.', 1, '', 'C', true);
-        $pdf->Cell(40, 7, 'Presupuesto.', 1, '', 'C', true);
+        $pdf->Cell(40, 7, 'Presupuesto', 1, '', 'C', true);
         $pdf->Cell(20, 7, 'Importe', 1, '', 'C', true);
 
         $pdf->Ln(7);
@@ -139,7 +147,7 @@ class Ticket_editviazul extends Controller {
             $this->viazulPdfRow($item[0], $item[1], $pdf, $total);
         }
 
-        $pdf->Cell(203, 7, '', 0, '', 'C', true);
+        $pdf->Cell(210, 7, '', 0, '', 'C', true);
         $pdf->Cell(40, 7, 'Importe Total', 1, '', 'L', true);
         $pdf->Cell(20, 7, number_format($total,2,",","."), 1, '', 'R', true);
 
@@ -168,6 +176,7 @@ class Ticket_editviazul extends Controller {
         $province_nameto = $data [0] ['province_nameto'];
         $motive_name = $data [0] ['motive_name'];
         $request_details = $data [0] ['request_details'];
+        $request_consecutive = $data [0] ['request_consecutive'];
         $viazul_price = $data [0] ['viazul_price'];
 
 //        $str = iconv('UTF-8', 'windows-1252', 'Persona que Autoriza: ' . $person_namelicensedby);
@@ -184,13 +193,16 @@ class Ticket_editviazul extends Controller {
 //        $pdf->Ln(20);
 
         //aqui se hace el for
+//        $pdf->SetFont('Arial', '', 10);
 
-        $str = iconv('UTF-8', 'windows-1252', $person_nameworker);
-        $pdf->Cell(60, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', $request_consecutive);
+        $pdf->Cell(20, 7, $str, 1, '', 'L', true);
+        $str = iconv('UTF-8', 'windows-1252', ucwords(strtolower($person_nameworker)));
+        $pdf->Cell(55, 7, $str, 1, '', 'L', true);
         $str = iconv('UTF-8', 'windows-1252', $person_identity);
         $pdf->Cell(25, 7, $str, 1, '', 'L', true);
         $str = iconv('UTF-8', 'windows-1252', $person_province);
-        $pdf->Cell(38, 7, $str, 1, '', 'L', true);
+        $pdf->Cell(30, 7, $str, 1, '', 'L', true);
         $str = iconv('UTF-8', 'windows-1252', $ticket_date);
         $pdf->Cell(20, 7, $str, 1, '', 'L', true);
         $str = iconv('UTF-8', 'windows-1252', $province_namefrom);

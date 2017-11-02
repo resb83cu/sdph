@@ -171,8 +171,9 @@ class Ticket_editviazul_model extends Model {
         $request_tickets_table = 'request_tickets';
         $count = self::getCountById($request_id, $ticket_date);
         $query = 'request_tickets.request_id, 
+					request_requests.request_consecutive,
 					request_requests.request_date,
-					request_requests.person_idworker, 
+					request_requests.person_idworker,
 					request_requests.person_idrequestedby,
 					request_requests.person_idlicensedby,
 					request_requests.request_details,
@@ -225,6 +226,7 @@ class Ticket_editviazul_model extends Model {
                     }
 
                     $value [] = array('request_id' => $row->request_id,
+                        'request_consecutive' => $row->request_consecutive,
                         'request_date' => $row->request_date,
                         'ticket_date' => $row->ticket_date,
                         'person_namerequestedby' => $person_namerequestedby,
@@ -247,6 +249,7 @@ class Ticket_editviazul_model extends Model {
                         'viazulstate_id' => $row->viazulstate_id);
                 } else {
                     $value [] = array('request_id' => $row->request_id,
+                        'request_consecutive' => $row->request_consecutive,
                         'request_date' => $row->request_date,
                         'ticket_date' => $row->ticket_date,
                         'person_namerequestedby' => $person_namerequestedby,

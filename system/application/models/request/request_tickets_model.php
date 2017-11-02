@@ -48,6 +48,7 @@ class Request_tickets_model extends Model {
             $where = "(request_tickets.province_idfrom = " . $centinela->get_province_id() . " OR request_tickets.province_idto = " . $centinela->get_province_id() . ")";
             $this->db->where($where);
         }
+        $this->db->order_by('request_tickets.request_id', 'asc');
         $this->db->order_by('request_tickets.ticket_date', 'asc');
         $this->db->order_by('request_tickets.province_idfrom', 'asc');
         $this->db->order_by('request_tickets.province_idto', 'asc');
