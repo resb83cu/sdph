@@ -198,37 +198,14 @@ Ext.onReady(function () {
      */
 
     Viazul.viazulRecord = new Ext.data.Record.create([
-        {
-            name: 'request_id',
-            type: 'int'
-        },
-
-        {
-            name: 'request_date'
-        },
-
-        {
-            name: 'ticket_date'
-        },
-
-        {
-            name: 'person_worker',
-            type: 'string'
-        },
-
-        {
-            name: 'province_namefrom',
-            type: 'string'
-        },
-
-        {
-            name: 'province_nameto',
-            type: 'string'
-        },
-
-        {
-            name: 'state'
-        }
+        {name: 'request_id', type: 'int'},
+        {name: 'request_date'},
+        {name: 'ticket_date'},
+        {name: 'person_worker', type: 'string'},
+        {name: 'province_namefrom', type: 'string'},
+        {name: 'province_nameto', type: 'string'},
+        {name: 'viazul_voucher', type: 'string'},
+        {name: 'state'}
     ]);
 
     /*
@@ -249,10 +226,12 @@ Ext.onReady(function () {
         method: 'POST'
     });
 
-    viazulDataStore = new Ext.data.Store({
+    viazulDataStore = new Ext.data.GroupingStore({
         id: 'viazulDS',
         proxy: Viazul.viazulDataProxy,
-        reader: Viazul.viazulGridReader
+        reader: Viazul.viazulGridReader,
+        sortInfo: {field: 'person_worker', direction: "ASC"},
+        groupField: 'viazul_voucher'
     });
 
     /*
@@ -267,6 +246,13 @@ Ext.onReady(function () {
                 dataIndex: 'request_id',
                 hidden: true
             }, {
+            id: 'viazul_voucher',
+            name: 'viazul_voucher',
+            header: 'Voucher',
+            width: 70,
+            dataIndex: 'viazul_voucher',
+            sortable: true
+        },{
             id: 'state',
             name: 'state',
             header: 'Estado',
@@ -274,19 +260,21 @@ Ext.onReady(function () {
             width: 90,
             dataIndex: 'state',
             sortable: true
-        }, {
-            id: 'request_date',
-            name: 'request_date',
-            header: 'Solicitado',
-            width: 120,
-            format: 'dd-mm-YYYY',
-            dataIndex: 'request_date',
-            sortable: true
-        }, {
+        },
+        //    {
+        //    id: 'request_date',
+        //    name: 'request_date',
+        //    header: 'Solicitado',
+        //    width: 120,
+        //    format: 'dd-mm-YYYY',
+        //    dataIndex: 'request_date',
+        //    sortable: true
+        //},
+            {
             id: 'ticket_date',
             name: 'ticket_date',
             header: 'Salida',
-            width: 80,
+            width: 90,
             format: 'dd-mm-YYYY',
             dataIndex: 'ticket_date',
             sortable: true
@@ -294,21 +282,21 @@ Ext.onReady(function () {
             id: 'person_worker',
             name: 'person_worker',
             header: 'Nombre y Apellidos',
-            width: 180,
+            width: 200,
             dataIndex: 'person_worker',
             sortable: true
         }, {
             id: 'province_namefrom',
             name: 'province_namefrom',
             header: 'Origen',
-            width: 150,
+            width: 130,
             dataIndex: 'province_namefrom',
             sortable: false
         }, {
             id: 'province_nameto',
             name: 'province_nameto',
             header: 'Destino',
-            width: 150,
+            width: 130,
             dataIndex: 'province_nameto',
             sortable: false
         }]
@@ -321,13 +309,14 @@ Ext.onReady(function () {
         id: 'ctr-viazul-grid',
         store: viazulDataStore,
         cm: Viazul.viazulColumnMode,
-        viewConfig: {
-            forceFit: false
-        },
+        view: new Ext.grid.GroupingView({
+            forceFit: true,
+            groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Pasajeros" : "Pasajero"]})'
+        }),
         //columnLines: true,
         frame: true,
         stripeRows: true,
-        collapsible: true,
+        collapsible: false,
         width: 750,
         height: 380,
         tbar: [{
@@ -366,7 +355,13 @@ Ext.onReady(function () {
                     return false;
                 } else {
                     var requests = [];
+                    var voucher = array[0].get('viazul_voucher');
                     for (var i = 0, len = array.length; i < len; i++) {
+                        if (voucher != array[i].get('viazul_voucher')) {
+                            Ext.MessageBox.alert('Error', 'Por favor seleccione los pasajes que tengan el mismo numero de Voucher.');
+                            sm2.clearSelections();
+                            return false;
+                        }
                         if (array[i].get('state') != 'Cancelada' && array[i].get('state') != '') {
                             requests.push(array[i].get('request_id') + "|" + array[i].get('ticket_date'));
                         }
@@ -1044,12 +1039,7 @@ function delRecords(btn) {
             });
         }
         sm2.clearSelections();
-        viazulDataStore.load({
-            params: {
-                start: 0,
-                limit: 100
-            }
-        });
+        viazulDataStore.load({params: {start: 0, limit: 100}});
     }
 }
     

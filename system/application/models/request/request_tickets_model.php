@@ -34,6 +34,7 @@ class Request_tickets_model extends Model {
 							request_tickets.ticket_state,
 							ticket_editviazul.viazulstate_id,
 							ticket_editviazul.ticket_viazul_id,
+							ticket_editviazul.viazul_voucher,
 							request_tickets.ticket_cancel');
         $this->db->from($request_requests_table);
         $this->db->join(self::TABLE_NAME, self::TABLE_NAME . '.request_id = ' . $request_requests_table . '.request_id', 'inner');
@@ -48,7 +49,7 @@ class Request_tickets_model extends Model {
             $where = "(request_tickets.province_idfrom = " . $centinela->get_province_id() . " OR request_tickets.province_idto = " . $centinela->get_province_id() . ")";
             $this->db->where($where);
         }
-        $this->db->order_by('request_tickets.request_id', 'asc');
+        $this->db->order_by('request_requests.person_idworker', 'asc');
         $this->db->order_by('request_tickets.ticket_date', 'asc');
         $this->db->order_by('request_tickets.province_idfrom', 'asc');
         $this->db->order_by('request_tickets.province_idto', 'asc');
@@ -72,7 +73,16 @@ class Request_tickets_model extends Model {
                 } else if (!empty($row->viazulstate_id)) {
                     $state = Conf_ticketviazulstates_model::getNameById($row->viazulstate_id);
                 }
-                $value [] = array('request_id' => $row->request_id, 'request_date' => $row->request_date, 'ticket_date' => $row->ticket_date, 'person_worker' => $person_worker, 'transport_name' => $transport_name, 'province_namefrom' => $province_namefrom, 'province_nameto' => $province_nameto, 'state' => $state);
+                $value [] = array(
+                    'request_id' => $row->request_id,
+                    'request_date' => $row->request_date,
+                    'ticket_date' => $row->ticket_date,
+                    'person_worker' => $person_worker,
+                    'transport_name' => $transport_name,
+                    'province_namefrom' => $province_namefrom,
+                    'province_nameto' => $province_nameto,
+                    'viazul_voucher' => $row->viazul_voucher,
+                    'state' => $state);
             }
         }
         $cant = $this->getCountDataViazul($dateStart, $dateEnd, $motive);
