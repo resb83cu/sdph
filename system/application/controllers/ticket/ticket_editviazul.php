@@ -3,15 +3,18 @@
 /**
  * @orm ticket_editetecsa
  */
-class Ticket_editviazul extends Controller {
+class Ticket_editviazul extends Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::Controller();
         $this->load->model('ticket/ticket_editviazul_model', 'conn', true);
     }
 
-    function index() {
-        $centinela = new Centinela ( );
+    function index()
+    {
+        $centinela = new Centinela ();
         $flag = $centinela->accessTo('ticket/ticket_editviazul');
         if ($flag) {
             $this->load->view('sys/header_view');
@@ -22,7 +25,8 @@ class Ticket_editviazul extends Controller {
         }
     }
 
-    function redirectError() {
+    function redirectError()
+    {
         $this->load->view('sys/header_view');
         $this->load->view('error_message');
         $this->load->view('sys/footer_view');
@@ -32,7 +36,8 @@ class Ticket_editviazul extends Controller {
      * Busca los datos para llenar el grid y los devuelve en formato JSON
      *
      */
-    public function setDataGrid() {
+    public function setDataGrid()
+    {
         $to = (!isset($_POST ['limit'])) ? 100 : $_POST ['limit'];
         $from = (!isset($_POST ["start"])) ? 0 : $_POST ["start"];
         $dateStart = $this->input->post('dateStart');
@@ -46,8 +51,9 @@ class Ticket_editviazul extends Controller {
      * Funcion para Insertar Provincia
      *
      */
-    function insert() {
-        $centinela = new Centinela ( );
+    function insert()
+    {
+        $centinela = new Centinela ();
         $flag = $centinela->accessTo('ticket/ticket_editviazul');
         if ($flag) {
             $result = $this->conn->insert();
@@ -61,8 +67,9 @@ class Ticket_editviazul extends Controller {
      * Funcion para Modificar fecha solicitud viazul
      *
      */
-    function changeDate() {
-        $centinela = new Centinela ( );
+    function changeDate()
+    {
+        $centinela = new Centinela ();
         $flag = $centinela->accessTo('ticket/ticket_editviazul');
         if ($flag) {
             $result = $this->conn->changeDate();
@@ -76,8 +83,9 @@ class Ticket_editviazul extends Controller {
      * Elimina Transporte
      * recibe como parametro el nombre de la provincia
      */
-    function delete($id, $date) {
-        $centinela = new Centinela ( );
+    function delete($id, $date)
+    {
+        $centinela = new Centinela ();
         $flag = $centinela->accessTo('ticket/ticket_editviazul');
         if ($flag) {
             $this->conn->delete($id, $date);
@@ -90,19 +98,22 @@ class Ticket_editviazul extends Controller {
      * Devuelve una provincia dado el nombre de la misma
      *
      */
-    function get() {
+    function get()
+    {
         $data = $this->conn->get();
         die("{data : " . json_encode($data) . "}");
     }
 
-    function getById($request_id, $ticket_date) {
+    function getById($request_id, $ticket_date)
+    {
         $data = $this->conn->getById($request_id, $ticket_date);
         die("{data : " . json_encode($data) . "}");
         //echo "<pre>"; print_r($data); echo "</pre>";
     }
 
-    function viazulPdfMultiple($requests) {
-        $centinela = new Centinela ( );
+    function viazulPdfMultiple($requests, $voucher)
+    {
+        $centinela = new Centinela ();
         $results = explode(",", $requests);
         $this->load->library('FPDF/pdf_request');
         $pdf = new Pdf_request('L', 'mm', 'A4');
@@ -126,7 +137,7 @@ class Ticket_editviazul extends Controller {
         $str = iconv('UTF-8', 'windows-1252', 'Persona que Imprime: ' . $centinela->get_person_fullname());
         $pdf->Cell(120, 7, $str, '', '', '', true);
         $pdf->Ln(8);
-        $str = iconv('UTF-8', 'windows-1252', 'Voucher: ');
+        $str = iconv('UTF-8', 'windows-1252', 'Voucher: ' . $voucher);
         $pdf->Cell(120, 7, $str, '', '', '', true);
         $pdf->Ln(10);
 
@@ -149,13 +160,14 @@ class Ticket_editviazul extends Controller {
 
         $pdf->Cell(210, 7, '', 0, '', 'C', true);
         $pdf->Cell(40, 7, 'Importe Total', 1, '', 'L', true);
-        $pdf->Cell(20, 7, number_format($total,2,",","."), 1, '', 'R', true);
+        $pdf->Cell(20, 7, number_format($total, 2, ",", "."), 1, '', 'R', true);
 
-        $pdf->Output('Viazul - Datos del personal autorizado a viajar -'.$centinela->get_person_fullname().' - '.$centinela->today().'.pdf', 'D');
+        $pdf->Output('Viazul - Datos del personal autorizado a viajar -' . $centinela->get_person_fullname() . ' - ' . $centinela->today() . '.pdf', 'D');
 
     }
 
-    function viazulPdfRow($request_id, $ticket_date, $pdf, &$total) {
+    function viazulPdfRow($request_id, $ticket_date, $pdf, &$total)
+    {
         $data = $this->conn->getById($request_id, $ticket_date);
         $count = count($data);
         if ($count == 0) {
@@ -211,7 +223,7 @@ class Ticket_editviazul extends Controller {
         $pdf->Cell(30, 7, $str, 1, '', 'L', true);
         $str = iconv('UTF-8', 'windows-1252', $center_name);
         $pdf->Cell(40, 7, $str, 1, '', 'L', true);
-        $str = iconv('UTF-8', 'windows-1252', number_format($viazul_price,2,",","."));
+        $str = iconv('UTF-8', 'windows-1252', number_format($viazul_price, 2, ",", "."));
         $pdf->Cell(20, 7, $str, 1, '', 'R', true);
 
         $pdf->Ln(7);
@@ -220,8 +232,9 @@ class Ticket_editviazul extends Controller {
 
     }
 
-    function viazulPdf($request_id, $ticket_date) {
-        $centinela = new Centinela ( );
+    function viazulPdf($request_id, $ticket_date)
+    {
+        $centinela = new Centinela ();
         $flag = $centinela->accessTo('ticket/ticket_editviazul');
         if ($flag) {
             $data = $this->conn->getById($request_id, $ticket_date);

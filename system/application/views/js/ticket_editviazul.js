@@ -252,7 +252,7 @@ Ext.onReady(function () {
             width: 70,
             dataIndex: 'viazul_voucher',
             sortable: true
-        },{
+        }, {
             id: 'state',
             name: 'state',
             header: 'Estado',
@@ -261,24 +261,24 @@ Ext.onReady(function () {
             dataIndex: 'state',
             sortable: true
         },
-        //    {
-        //    id: 'request_date',
-        //    name: 'request_date',
-        //    header: 'Solicitado',
-        //    width: 120,
-        //    format: 'dd-mm-YYYY',
-        //    dataIndex: 'request_date',
-        //    sortable: true
-        //},
+            //    {
+            //    id: 'request_date',
+            //    name: 'request_date',
+            //    header: 'Solicitado',
+            //    width: 120,
+            //    format: 'dd-mm-YYYY',
+            //    dataIndex: 'request_date',
+            //    sortable: true
+            //},
             {
-            id: 'ticket_date',
-            name: 'ticket_date',
-            header: 'Salida',
-            width: 90,
-            format: 'dd-mm-YYYY',
-            dataIndex: 'ticket_date',
-            sortable: true
-        }, {
+                id: 'ticket_date',
+                name: 'ticket_date',
+                header: 'Salida',
+                width: 90,
+                format: 'dd-mm-YYYY',
+                dataIndex: 'ticket_date',
+                sortable: true
+            }, {
             id: 'person_worker',
             name: 'person_worker',
             header: 'Nombre y Apellidos',
@@ -366,7 +366,7 @@ Ext.onReady(function () {
                             requests.push(array[i].get('request_id') + "|" + array[i].get('ticket_date'));
                         }
                     }
-                    Viazul.filterForm.getForm().getEl().dom.action = baseUrl + 'index.php/ticket/ticket_editviazul/viazulPdfMultiple/' + requests;
+                    Viazul.filterForm.getForm().getEl().dom.action = baseUrl + 'index.php/ticket/ticket_editviazul/viazulPdfMultiple/' + requests + '/' + voucher;
                     Viazul.filterForm.getForm().getEl().dom.method = 'POST';
                     Viazul.filterForm.getForm().submit();
                 }
