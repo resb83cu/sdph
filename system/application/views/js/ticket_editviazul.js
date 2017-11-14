@@ -430,7 +430,7 @@ Ext.onReady(function () {
                         viazulDataStore.load({
                             params: {
                                 start: 0,
-                                limit: 100
+                                limit: 1000
                             }
                         });
                     },
@@ -832,7 +832,6 @@ Ext.onReady(function () {
                     name: 'request_id',
                     xtype: 'hidden'
                 }]
-
         });
 
 
@@ -1039,7 +1038,7 @@ function delRecords(btn) {
             });
         }
         sm2.clearSelections();
-        viazulDataStore.load({params: {start: 0, limit: 100}});
+        viazulDataStore.load({params: {start: 0, limit: 1000}});
     }
 }
     
