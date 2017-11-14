@@ -38,7 +38,7 @@ class Ticket_editviazul extends Controller
      */
     public function setDataGrid()
     {
-        $to = (!isset($_POST ['limit'])) ? 100 : $_POST ['limit'];
+        $to = (!isset($_POST ['limit'])) ? 1000 : $_POST ['limit'];
         $from = (!isset($_POST ["start"])) ? 0 : $_POST ["start"];
         $dateStart = $this->input->post('dateStart');
         $dateEnd = $this->input->post('dateEnd');

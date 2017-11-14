@@ -238,7 +238,7 @@ Ext.onReady(function () {
      * Creamos el modelo de columnas para el grid de movimientos de la cuenta
      */
     Viazul.viazulColumnMode = new xg.ColumnModel(
-        [new xg.RowNumberer(),
+        [new xg.RowNumberer({width: 26}),
             sm2,
             {
                 id: 'request_id',
@@ -442,7 +442,7 @@ Ext.onReady(function () {
             }
         }],
         bbar: new Ext.PagingToolbar({
-            pageSize: 100,
+            pageSize: 1000,
             store: viazulDataStore,
             displayInfo: true,
             displayMsg: 'Datos del  {0} - {1} de {2}',
@@ -525,7 +525,7 @@ Ext.onReady(function () {
             viazulDataStore.load({
                 params: {
                     start: 0,
-                    limit: 100
+                    limit: 1000
                 }
             });
         }
@@ -550,7 +550,7 @@ Ext.onReady(function () {
             viazulDataStore.load({
                 params: {
                     start: 0,
-                    limit: 100
+                    limit: 1000
                 }
             });
         }
