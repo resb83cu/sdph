@@ -38,10 +38,10 @@ if (! defined ( 'BASEPATH' ))
 
 $active_group = "default";
 $active_record = TRUE;
-$db ['default'] ['hostname'] = "127.0.0.1";
+$db ['default'] ['hostname'] = "192.168.90.45";
 $db ['default'] ['username'] = "sdph";
 $db ['default'] ['password'] = "sdph*2010";
-$db ['default'] ['database'] = "curso";
+$db ['default'] ['database'] = "sdph";
 $db ['default'] ['dbdriver'] = "postgre";
 $db ['default'] ['dbprefix'] = "";
 $db ['default'] ['pconnect'] = TRUE;
