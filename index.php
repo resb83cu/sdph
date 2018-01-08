@@ -1,5 +1,7 @@
 <?php
 date_default_timezone_set('America/Havana');
+ini_set('max_execution_time',300);
+set_time_limit(300);
 /*
 |---------------------------------------------------------------
 | PHP ERROR REPORTING LEVEL

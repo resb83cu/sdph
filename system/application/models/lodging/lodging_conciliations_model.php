@@ -1,13 +1,16 @@
 <?php
 
-class Lodging_conciliations_model extends Model {
+class Lodging_conciliations_model extends Model
+{
     const TABLE_NAME = 'lodging_conciliations';
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
-    public function getData($dateStart, $dateEnd, $hotel, $province) {
+    public function getData($dateStart, $dateEnd, $hotel, $province)
+    {
         $this->load->model('conf/conf_costcenters_model');
         $this->load->model('person/person_persons_model');
         $this->load->model('conf/conf_hotels_model');
@@ -20,22 +23,22 @@ class Lodging_conciliations_model extends Model {
         $dateStart = empty($dateStart) ? '1900-01-01' : $dateStart;
         $dateEnd = empty($dateEnd) ? '1900-01-01' : $dateEnd;
         $this->db->select($lodging_edit_table . '.request_id, ' .
-                self::TABLE_NAME . '.conciliation_id, ' .
-                self::TABLE_NAME . '.bill_number, ' .
-                self::TABLE_NAME . '.diet_amount, ' .
-                self::TABLE_NAME . '.lodging_amount, ' .
-                self::TABLE_NAME . '.conciliation_entrancedate, ' .
-                self::TABLE_NAME . '.conciliation_exitdate, ' .
-                $request_requests_table . '.request_inversiontask, ' .
-                $request_requests_table . '.request_details,' .
-                $request_requests_table . '.person_idlicensedby, ' .
-                $request_requests_table . '.center_id, ' .
-                $request_requests_table . '.person_idworker, ' .
-                $request_lodgings_table . '.lodging_entrancedate, ' .
-                $request_lodgings_table . '.lodging_exitdate, ' .
-                $request_lodgings_table . '.province_idlodging,' .
-                $lodging_edit_table . '.hotel_id,' .
-                $lodging_edit_table . '.letter_id');
+            self::TABLE_NAME . '.conciliation_id, ' .
+            self::TABLE_NAME . '.bill_number, ' .
+            self::TABLE_NAME . '.diet_amount, ' .
+            self::TABLE_NAME . '.lodging_amount, ' .
+            self::TABLE_NAME . '.conciliation_entrancedate, ' .
+            self::TABLE_NAME . '.conciliation_exitdate, ' .
+            $request_requests_table . '.request_inversiontask, ' .
+            $request_requests_table . '.request_details,' .
+            $request_requests_table . '.person_idlicensedby, ' .
+            $request_requests_table . '.center_id, ' .
+            $request_requests_table . '.person_idworker, ' .
+            $request_lodgings_table . '.lodging_entrancedate, ' .
+            $request_lodgings_table . '.lodging_exitdate, ' .
+            $request_lodgings_table . '.province_idlodging,' .
+            $lodging_edit_table . '.hotel_id,' .
+            $lodging_edit_table . '.letter_id');
         $this->db->from($request_requests_table);
         $this->db->join($request_lodgings_table, $request_lodgings_table . '.request_id = ' . $request_requests_table . '.request_id', 'inner');
         $this->db->join($lodging_edit_table, $lodging_edit_table . '.request_id = ' . $request_lodgings_table . '.request_id', 'inner');
@@ -82,9 +85,10 @@ class Lodging_conciliations_model extends Model {
         }
         return $value;
     }
-                                        
-    public function getDataCociliation($dateStart='', $dateEnd='', $hotel='', $province='', $center='', $motive='', $show=false, $isPDF='no') {
-        
+
+    public function getDataCociliation($dateStart = '', $dateEnd = '', $hotel = '', $province = '', $center = '', $motive = '', $show = false, $isPDF = 'no')
+    {
+
         $this->load->model('person/person_persons_model');
         $this->load->model('conf/conf_hotels_model');
         $this->load->model('conf/conf_costcenters_model');
@@ -99,20 +103,20 @@ class Lodging_conciliations_model extends Model {
         $dateStart = empty($dateStart) ? '1900-01-01' : $dateStart;
         $dateEnd = empty($dateEnd) ? '1900-01-01' : $dateEnd;
         $this->db->select($lodging_edit_table . '.request_id, ' .
-                self::TABLE_NAME . '.conciliation_id, ' .
-                self::TABLE_NAME . '.bill_number, ' .
-                self::TABLE_NAME . '.diet_amount, ' .
-                self::TABLE_NAME . '.lodging_amount, ' .
-                self::TABLE_NAME . '.conciliation_entrancedate, ' .
-                self::TABLE_NAME . '.conciliation_exitdate, ' .
-                self::TABLE_NAME . '.conciliation_pay, ' .
-                $request_requests_table . '.request_inversiontask, ' .
-                $request_requests_table . '.request_details,' .
-                $request_requests_table . '.person_idlicensedby, ' .
-                $request_requests_table . '.center_id, ' .
-                $request_requests_table . '.person_idworker, ' .
-                $request_lodgings_table . '.province_idlodging,' .
-                $lodging_edit_table . '.hotel_id');
+//            self::TABLE_NAME . '.conciliation_id, ' .
+            self::TABLE_NAME . '.bill_number, ' .
+            self::TABLE_NAME . '.diet_amount, ' .
+            self::TABLE_NAME . '.lodging_amount, ' .
+            self::TABLE_NAME . '.conciliation_entrancedate, ' .
+            self::TABLE_NAME . '.conciliation_exitdate, ' .
+            self::TABLE_NAME . '.conciliation_pay, ' .
+            $request_requests_table . '.request_inversiontask, ' .
+            $request_requests_table . '.request_details,' .
+            $request_requests_table . '.person_idlicensedby, ' .
+            $request_requests_table . '.center_id, ' .
+            $request_requests_table . '.person_idworker, ' .
+            $request_lodgings_table . '.province_idlodging,' .
+            $lodging_edit_table . '.hotel_id');
         $this->db->from($request_requests_table);
         $this->db->join($request_lodgings_table, $request_lodgings_table . '.request_id = ' . $request_requests_table . '.request_id', 'inner');
         $this->db->join($lodging_edit_table, $lodging_edit_table . '.request_id = ' . $request_lodgings_table . '.request_id', 'inner');
@@ -135,6 +139,8 @@ class Lodging_conciliations_model extends Model {
         $this->db->distinct();
         $this->db->order_by('conciliation_entrancedate', 'asc');
         $result = $this->db->get();
+//        echo $this->db->last_query();
+//        die();
         $cant = 0;
         $total_diet = 0;
         $total_lodging = 0;
@@ -190,16 +196,17 @@ class Lodging_conciliations_model extends Model {
                 'diet' => $total_diet,
                 'lodging' => $total_lodging,
                 'total' => $total_total);
-            $value = array_merge((array) $value, (array) $last);
+            $value = array_merge((array)$value, (array)$last);
             if ($isPDF == 'si') {
                 return $value;
             } else {
-                echo ("{count : " . $cant . ", data : " . json_encode($value) . "}");
+                echo("{count : " . $cant . ", data : " . json_encode($value) . "}");
             }
         }
     }
 
-    public function getPdfCociliation($dateStart='', $dateEnd='', $hotel='', $province='', $center='', $motive='', $array) {
+    public function getPdfCociliation($dateStart = '', $dateEnd = '', $hotel = '', $province = '', $center = '', $motive = '', $array)
+    {
         $this->load->model('person/person_persons_model');
         $this->load->model('conf/conf_hotels_model');
         $this->load->model('conf/conf_costcenters_model');
@@ -214,20 +221,20 @@ class Lodging_conciliations_model extends Model {
         $dateStart = empty($dateStart) ? '1900-01-01' : $dateStart;
         $dateEnd = empty($dateEnd) ? '1900-01-01' : $dateEnd;
         $this->db->select($lodging_edit_table . '.request_id, ' .
-                self::TABLE_NAME . '.conciliation_id, ' .
-                self::TABLE_NAME . '.bill_number, ' .
-                self::TABLE_NAME . '.diet_amount, ' .
-                self::TABLE_NAME . '.lodging_amount, ' .
-                self::TABLE_NAME . '.conciliation_entrancedate, ' .
-                self::TABLE_NAME . '.conciliation_exitdate, ' .
-                self::TABLE_NAME . '.conciliation_pay, ' .
-                $request_requests_table . '.request_inversiontask, ' .
-                $request_requests_table . '.request_details,' .
-                $request_requests_table . '.person_idlicensedby, ' .
-                $request_requests_table . '.center_id, ' .
-                $request_requests_table . '.person_idworker, ' .
-                $request_lodgings_table . '.province_idlodging,' .
-                $lodging_edit_table . '.hotel_id');
+//            self::TABLE_NAME . '.conciliation_id, ' .
+            self::TABLE_NAME . '.bill_number, ' .
+            self::TABLE_NAME . '.diet_amount, ' .
+            self::TABLE_NAME . '.lodging_amount, ' .
+            self::TABLE_NAME . '.conciliation_entrancedate, ' .
+            self::TABLE_NAME . '.conciliation_exitdate, ' .
+            self::TABLE_NAME . '.conciliation_pay, ' .
+            $request_requests_table . '.request_inversiontask, ' .
+            $request_requests_table . '.request_details,' .
+            $request_requests_table . '.person_idlicensedby, ' .
+            $request_requests_table . '.center_id, ' .
+            $request_requests_table . '.person_idworker, ' .
+            $request_lodgings_table . '.province_idlodging,' .
+            $lodging_edit_table . '.hotel_id');
         $this->db->from($request_requests_table);
         $this->db->join($request_lodgings_table, $request_lodgings_table . '.request_id = ' . $request_requests_table . '.request_id', 'inner');
         $this->db->join($lodging_edit_table, $lodging_edit_table . '.request_id = ' . $request_lodgings_table . '.request_id', 'inner');
@@ -300,12 +307,13 @@ class Lodging_conciliations_model extends Model {
                 'diet' => $total_diet,
                 'lodging' => $total_lodging,
                 'total' => $total_total);
-            $value = array_merge((array) $value, (array) $last);
+            $value = array_merge((array)$value, (array)$last);
             return $value;
         }
     }
 
-    public function billPdf($bill, $hotel) {
+    public function billPdf($bill, $hotel)
+    {
         $this->load->model('conf/conf_costcenters_model');
         $this->load->model('person/person_persons_model');
         $this->load->model('conf/conf_hotels_model');
@@ -318,19 +326,19 @@ class Lodging_conciliations_model extends Model {
         $dateStart = empty($dateStart) ? '1900-01-01' : $dateStart;
         $dateEnd = empty($dateEnd) ? '1900-01-01' : $dateEnd;
         $this->db->select($lodging_edit_table . '.request_id, ' .
-                self::TABLE_NAME . '.conciliation_id, ' .
-                self::TABLE_NAME . '.bill_number, ' .
-                self::TABLE_NAME . '.diet_amount, ' .
-                self::TABLE_NAME . '.lodging_amount, ' .
-                self::TABLE_NAME . '.conciliation_entrancedate, ' .
-                self::TABLE_NAME . '.conciliation_exitdate, ' .
-                $request_requests_table . '.request_inversiontask, ' .
-                $request_requests_table . '.request_details,' .
-                $request_requests_table . '.person_idlicensedby, ' .
-                $request_requests_table . '.center_id, ' .
-                $request_requests_table . '.person_idworker, ' .
-                $request_lodgings_table . '.province_idlodging,' .
-                $lodging_edit_table . '.hotel_id');
+            self::TABLE_NAME . '.conciliation_id, ' .
+            self::TABLE_NAME . '.bill_number, ' .
+            self::TABLE_NAME . '.diet_amount, ' .
+            self::TABLE_NAME . '.lodging_amount, ' .
+            self::TABLE_NAME . '.conciliation_entrancedate, ' .
+            self::TABLE_NAME . '.conciliation_exitdate, ' .
+            $request_requests_table . '.request_inversiontask, ' .
+            $request_requests_table . '.request_details,' .
+            $request_requests_table . '.person_idlicensedby, ' .
+            $request_requests_table . '.center_id, ' .
+            $request_requests_table . '.person_idworker, ' .
+            $request_lodgings_table . '.province_idlodging,' .
+            $lodging_edit_table . '.hotel_id');
         $this->db->from($request_requests_table);
         $this->db->join($request_lodgings_table, $request_lodgings_table . '.request_id = ' . $request_requests_table . '.request_id', 'inner');
         $this->db->join($lodging_edit_table, $lodging_edit_table . '.request_id = ' . $request_lodgings_table . '.request_id', 'inner');
@@ -384,14 +392,15 @@ class Lodging_conciliations_model extends Model {
                 'hotel_name' => '',
                 'diet' => $total_diet,
                 'lodging' => $total_lodging);
-            $value = array_merge((array) $value, (array) $last);
+            $value = array_merge((array)$value, (array)$last);
         } else {
             $value = array();
         }
         return $value;
     }
 
-    public function getDataAccounting($dateStart='', $dateEnd='', $hotel='', $province='', $center='', $motive='', $show=false, $isPDF='no', $conciliation, $inversion, $chain='') {
+    public function getDataAccounting($dateStart = '', $dateEnd = '', $hotel = '', $province = '', $center = '', $motive = '', $show = false, $isPDF = 'no', $conciliation, $inversion, $chain = '')
+    {
         $this->load->model('person/person_persons_model');
         $this->load->model('conf/conf_hotels_model');
         $this->load->model('conf/conf_provinces_model');
@@ -404,25 +413,29 @@ class Lodging_conciliations_model extends Model {
         $request_ids = empty($request_ids) ? 0 : $request_ids;*/
         $dateStart = empty($dateStart) ? '1900-01-01' : $dateStart;
         $dateEnd = empty($dateEnd) ? '1900-01-01' : $dateEnd;
-        $this->db->select($request_requests_table . '.request_id, ' .
-                $request_requests_table . '.request_date, ' .
-                $request_requests_table . '.person_idlicensedby, ' .
-                $request_requests_table . '.request_inversiontask, ' .
-                $request_lodgings_table . '.lodging_entrancedate, ' .
-                $request_requests_table . '.request_details,' .
-                $request_lodgings_table . '.lodging_exitdate, ' .
-                $conf_costcenters_table . '.center_name, ' .
-                $request_requests_table . '.person_idworker, ' .
-                $lodging_edit_table . '.hotel_id,' .
-                $lodging_edit_table . '.letter_id,' .
-                $request_lodgings_table . '.province_idlodging,' .
-                self::TABLE_NAME . '.bill_number');
+        $this->db->select($request_requests_table . '.request_id,' .
+            $request_requests_table . '.request_date,' .
+            $request_requests_table . '.person_idlicensedby,' .
+            $request_requests_table . '.request_inversiontask,' .
+            $request_lodgings_table . '.lodging_entrancedate,' .
+            $request_requests_table . '.request_details,' .
+            $request_lodgings_table . '.lodging_exitdate,' .
+            $conf_costcenters_table . '.center_name,' .
+            $request_requests_table . '.person_idworker,' .
+            $conf_hotels_table . '.hotel_name,' .
+            $lodging_edit_table . '.letter_id,' .
+            $lodging_edit_table . '.hotel_id,' .
+            $request_lodgings_table . '.province_idlodging,' .
+            'conf_provinces.province_name,' .
+            self::TABLE_NAME . '.bill_number');
         $this->db->from($request_requests_table);
         $this->db->join($conf_costcenters_table, $conf_costcenters_table . '.center_id = ' . $request_requests_table . '.center_id', 'inner');
         $this->db->join($request_lodgings_table, $request_lodgings_table . '.request_id = ' . $request_requests_table . '.request_id', 'inner');
+        $this->db->join('conf_provinces', 'conf_provinces.province_id = ' . $request_lodgings_table . '.province_idlodging', 'inner');
         $this->db->join($lodging_edit_table, $lodging_edit_table . '.request_id = ' . $request_lodgings_table . '.request_id', 'left');
         $this->db->join($conf_hotels_table, $conf_hotels_table . '.hotel_id = ' . $lodging_edit_table . '.hotel_id', 'inner');
         $this->db->join(self::TABLE_NAME, self::TABLE_NAME . '.request_id = ' . $lodging_edit_table . '.request_id', 'left');
+        $this->db->where($request_requests_table . '.request_date >', '2016-01-01');
         $this->db->where($request_lodgings_table . '.lodging_entrancedate >=', $dateStart);
         $this->db->where($request_lodgings_table . '.lodging_entrancedate <=', $dateEnd);
         $this->db->where($request_lodgings_table . '.lodging_canceled ', 0);
@@ -466,18 +479,19 @@ class Lodging_conciliations_model extends Model {
         if ($result->result() != null) {
             $date = new Dates();
             $value = array();
+            $person = new Person_persons_model();
+            $province_table = new Conf_provinces_model();
+            $hotel_table = new Conf_hotels_model();
             foreach ($result->result() as $row) {
-                $hotel = Conf_hotels_model::getNameById($row->hotel_id);
-                $person_worker = Person_persons_model::getNameById($row->person_idworker);
-                $person_identity = Person_persons_model::getIdentityById($row->person_idworker);
-                $person_licensedby = Person_persons_model::getNameById($row->person_idlicensedby);
-                $province_lodging = Conf_provinces_model::getNameById($row->province_idlodging);
+                $person_worker = $person->getById($row->person_idworker);
+                $person_licensedby = $person->getNameById($row->person_idlicensedby);
+//                $province_lodging = $province_table->getNameById($row->province_idlodging);
                 $beginDate = date_parse($row->lodging_entrancedate);
                 $endDate = date_parse($row->lodging_exitdate);
-                $hotel_price = Conf_hotels_model::getPriceById($row->hotel_id);
+                $hotel_price = $hotel_table->getPriceById($row->hotel_id);
                 $dateDiff = $date->dateDiff($beginDate, $endDate);
                 $lodging = $dateDiff * $hotel_price;
-                $diet = self::dietCalculation($row->request_id);
+                $diet = self::dietCalculation($row->lodging_entrancedate, $row->lodging_exitdate);
                 $value [] = array('request_id' => $row->request_id,
                     'request_date' => $row->request_date,
                     'person_licensedby' => $person_licensedby,
@@ -486,11 +500,11 @@ class Lodging_conciliations_model extends Model {
                     'lodging_entrancedate' => $row->lodging_entrancedate,
                     'lodging_exitdate' => $row->lodging_exitdate,
                     'center_name' => $row->center_name,
-                    'person_worker' => $person_worker,
-                    'person_identity' => $person_identity,
+                    'person_worker' => $person_worker[0]['person_name'] . ' ' . $person_worker[0]['person_lastname'] . ' ' . $person_worker[0]['person_secondlastname'],
+                    'person_identity' => $person_worker[0]['person_identity'],
                     'request_details' => strtolower($row->request_details),
-                    'province_lodging' => $province_lodging,
-                    'hotel_name' => $hotel,
+                    'province_lodging' => $row->province_name,
+                    'hotel_name' => $row->hotel_name,
                     'diet' => $diet,
                     'lodging' => $lodging);
                 $total_diet = $total_diet + $diet;
@@ -514,37 +528,28 @@ class Lodging_conciliations_model extends Model {
             'province_lodging' => '',
             'person_identity' => 'TOTAL',
             'hotel_name' => '',
-            'diet' => number_format($total_diet,2,",","."),
+            'diet' => number_format($total_diet, 2, ",", "."),
             'lodging' => $total_lodging);
-        $value = array_merge((array) $value, (array) $last);
+        $value = array_merge((array)$value, (array)$last);
         if ($isPDF == 'si') { //devuelve todos por exceso
             return $value;
         } else { //el cant es filtrado
-            echo ("{count : " . $cant . ", data : " . json_encode($value) . "}"); // este valor se le asigna al return del setDatagridconditional para pasarle
+            echo("{count : " . $cant . ", data : " . json_encode($value) . "}"); // este valor se le asigna al return del setDatagridconditional para pasarle
         }
     }
 
-    public function dietCalculation($request_id) {
-        $request_lodgings_table = 'request_lodgings';
-        $query = 'request_lodgings.lodging_entrancedate,
-					request_lodgings.lodging_exitdate';
-        $this->db->select($query);
-        $this->db->from($request_lodgings_table);
-        $this->db->where($request_lodgings_table . '.request_id', $request_id);
-        $result = $this->db->get()->row();
-        $total = 0;
-        if ($result > 0) {
-            $fecha = new Dates();
-            $diasHospedaje = $fecha->diasEntreFechas($result->lodging_entrancedate, $result->lodging_exitdate) + 1;
-            $pagoDinero = 6.5;
-            $total = $diasHospedaje * $pagoDinero;
-        }
+    public function dietCalculation($beginDate, $endDate)
+    {
+        $fecha = new Dates();
+        $diasHospedaje = $fecha->diasEntreFechas($beginDate, $endDate) + 1;
+        $pagoDinero = 6.5;
+        $total = $diasHospedaje * $pagoDinero;
 
-        return number_format($total,2,",",".");
-//        return number_format($total,2);
+        return number_format($total, 2, ",", ".");
     }
 
-    public function insert() {
+    public function insert()
+    {
         $conciliation_id = $this->input->post('conciliation_id');
         $conciliation ['request_id'] = $this->input->post('request_id');
         $dieta = $this->input->post('diet_amount');
@@ -557,7 +562,7 @@ class Lodging_conciliations_model extends Model {
             $this->db->where('conciliation_id', $conciliation_id);
             $this->db->trans_begin();
             $re = $this->db->update(self::TABLE_NAME, $conciliation);
-            $logs = new Logs ( );
+            $logs = new Logs ();
 
             $mywhere = 'where conciliation_id = ' . $conciliation_id;
             $myquery = $logs->sqlupdate(self::TABLE_NAME, $conciliation, $mywhere);
@@ -576,7 +581,7 @@ class Lodging_conciliations_model extends Model {
         } else {
             $this->db->trans_begin();
             $re = $this->db->insert(self::TABLE_NAME, $conciliation);
-            $logs = new Logs ( );
+            $logs = new Logs ();
             $myquery = $logs->sqlinsert(self::TABLE_NAME, $conciliation);
             $logs->write(self::TABLE_NAME, 'INSERT', $myquery);
 
@@ -597,7 +602,8 @@ class Lodging_conciliations_model extends Model {
      *
      * @return boolean
      */
-    public function insertBill($request_id, $bill_number) {
+    public function insertBill($request_id, $bill_number)
+    {
         //$request_id = $this->input->post('request_id');
         $conciliation ['request_id'] = $request_id;
         $conciliation ['bill_number'] = $bill_number; //$this->input->post('bill_number');
@@ -610,7 +616,7 @@ class Lodging_conciliations_model extends Model {
             $this->db->where('request_id', $request_id);
             $this->db->trans_begin();
             $re = $this->db->update(self::TABLE_NAME, $conciliation);
-            $logs = new Logs ( );
+            $logs = new Logs ();
 
             $mywhere = 'where request_id = ' . $request_id;
             $myquery = $logs->sqlupdate(self::TABLE_NAME, $conciliation, $mywhere);
@@ -624,13 +630,12 @@ class Lodging_conciliations_model extends Model {
             }
             if ($re == true) {
                 return "true";
-            }
-            else
+            } else
                 return "false";
         } else {
             $this->db->trans_begin();
             $re = $this->db->insert(self::TABLE_NAME, $conciliation);
-            $logs = new Logs ( );
+            $logs = new Logs ();
             $myquery = $logs->sqlinsert(self::TABLE_NAME, $conciliation);
             $logs->write(self::TABLE_NAME, 'INSERT', $myquery);
 
@@ -650,11 +655,12 @@ class Lodging_conciliations_model extends Model {
      *
      * @param string $requestservice_name
      */
-    public function delete($request_id) {
+    public function delete($request_id)
+    {
         $this->db->where('request_id', $request_id);
         $this->db->trans_begin();
         $this->db->delete(self::TABLE_NAME);
-        $logs = new Logs ( );
+        $logs = new Logs ();
         $mywhere = 'where request_id = ' . $request_id;
         $myquery = $logs->sqldelete(self::TABLE_NAME, $mywhere);
         $logs->write(self::TABLE_NAME, 'DELETE', $myquery);
@@ -666,12 +672,13 @@ class Lodging_conciliations_model extends Model {
         }
     }
 
-    public function setPay($request_id) {
+    public function setPay($request_id)
+    {
         $conciliation ['conciliation_pay'] = 'true';
         $this->db->where('request_id', $request_id);
         $this->db->trans_begin();
         $re = $this->db->update(self::TABLE_NAME, $conciliation);
-        $logs = new Logs ( );
+        $logs = new Logs ();
 
         $mywhere = 'where request_id = ' . $request_id;
         $myquery = $logs->sqlupdate(self::TABLE_NAME, $conciliation, $mywhere);
@@ -689,7 +696,8 @@ class Lodging_conciliations_model extends Model {
             return "false";
     }
 
-    public function getIds() {
+    public function getIds()
+    {
         $this->db->select('request_id');
         $this->db->from(self::TABLE_NAME);
         $result = $this->db->get();
@@ -704,7 +712,8 @@ class Lodging_conciliations_model extends Model {
         return $value;
     }
 
-    public function getById($request_id) {
+    public function getById($request_id)
+    {
         $this->load->model('conf/conf_costcenters_model');
         $this->load->model('person/person_persons_model');
         $this->load->model('conf/conf_hotels_model');
@@ -717,16 +726,16 @@ class Lodging_conciliations_model extends Model {
         $dateStart = empty($dateStart) ? '1900-01-01' : $dateStart;
         $dateEnd = empty($dateEnd) ? '1900-01-01' : $dateEnd;
         $this->db->select($lodging_edit_table . '.request_id, ' .
-                self::TABLE_NAME . '.conciliation_id, ' .
-                self::TABLE_NAME . '.diet_amount, ' .
-                self::TABLE_NAME . '.lodging_amount, ' .
-                self::TABLE_NAME . '.conciliation_entrancedate, ' .
-                self::TABLE_NAME . '.conciliation_exitdate, ' .
-                $request_requests_table . '.person_idlicensedby, ' .
-                $request_requests_table . '.center_id, ' .
-                $request_requests_table . '.person_idworker, ' .
-                $request_lodgings_table . '.lodging_entrancedate, ' .
-                $request_lodgings_table . '.lodging_exitdate ');
+            self::TABLE_NAME . '.conciliation_id, ' .
+            self::TABLE_NAME . '.diet_amount, ' .
+            self::TABLE_NAME . '.lodging_amount, ' .
+            self::TABLE_NAME . '.conciliation_entrancedate, ' .
+            self::TABLE_NAME . '.conciliation_exitdate, ' .
+            $request_requests_table . '.person_idlicensedby, ' .
+            $request_requests_table . '.center_id, ' .
+            $request_requests_table . '.person_idworker, ' .
+            $request_lodgings_table . '.lodging_entrancedate, ' .
+            $request_lodgings_table . '.lodging_exitdate ');
         $this->db->from($request_requests_table);
         $this->db->join($request_lodgings_table, $request_lodgings_table . '.request_id = ' . $request_requests_table . '.request_id', 'inner');
         $this->db->join($lodging_edit_table, $lodging_edit_table . '.request_id = ' . $request_lodgings_table . '.request_id', 'inner');
@@ -758,7 +767,8 @@ class Lodging_conciliations_model extends Model {
         return $value;
     }
 
-    public function getCountById($request_id) {
+    public function getCountById($request_id)
+    {
         $this->db->select('request_id');
         $this->db->from(self::TABLE_NAME);
         $this->db->where('request_id', $request_id);

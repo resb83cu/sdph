@@ -184,8 +184,6 @@ class Lodging_conciliations extends Controller
 
     public function setDataCociliation($show = false, $isPDF = 'no')
     {
-		//set_time_limit(60);
-		//max_execution_time(60);
         if ($this->session->userdata('roll_id') >= 4) {
             if ($show == false && $isPDF == 'no') {
                 $this->load->view('sys/header_view');
@@ -215,7 +213,7 @@ class Lodging_conciliations extends Controller
 
                 $datosForWheres = array();
 
-                $datosForWheres ['dateStart'] = $this->input->post('startdt'); //aqui obligado  se pasael nombre ed los componentes, verificar que eeste en standar submit true la forma de los componentes
+                $datosForWheres ['dateStart'] = $this->input->post('startdt'); //aqui obligado se pasa el nombre ed los componentes, verificar que este en standar submit true la forma de los componentes
                 $datosForWheres ['dateEnd'] = $this->input->post('enddt');
                 $datosForWheres ['center'] = $this->input->post('center_id');
                 $datosForWheres ['province'] = $this->input->post('province_id');
@@ -266,13 +264,13 @@ class Lodging_conciliations extends Controller
                     $str = iconv('UTF-8', 'windows-1252', $data [$i] ['lodging_exitdate']);
                     $pdf->Cell(23, 5, $str, '', '', '', true);
 
-                    $str = iconv('UTF-8', 'windows-1252', $data [$i] ['diet']);
+                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['diet'], 2, ".", ","));
                     $pdf->Cell(20, 5, $str, '', '', 'L', true);
 
-                    $str = iconv('UTF-8', 'windows-1252', $data [$i] ['lodging']);
+                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['lodging'], 2, ".", ","));
                     $pdf->Cell(20, 5, $str, '', '', 'R', true);
 
-                    $str = iconv('UTF-8', 'windows-1252', $data [$i] ['total']);
+                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['total'], 2, ".", ","));
                     $pdf->Cell(42, 5, $str, '', '', 'R', true);
                     $pdf->Ln();
                     if ($i < $cant - 1) {
@@ -317,20 +315,20 @@ class Lodging_conciliations extends Controller
         $conf_costcenters_table = 'conf_costcenters';
         $conf_hotels_table = 'conf_hotels';
         $lodging_edit_table = 'lodging_edit';
-        $this->db->select(self::TABLE_NAME . '.bill_number as factura, ' .
-            self::TABLE_NAME . '.diet_amount as dieta, ' .
-            self::TABLE_NAME . '.lodging_amount as hospedaje, ' .
-            self::TABLE_NAME . '.conciliation_entrancedate as entrada_hospedaje, ' .
-            self::TABLE_NAME . '.conciliation_exitdate as salida_hospedaje, ' .
+        $this->db->select(self::TABLE_NAME . '.bill_number as Factura, ' .
+            self::TABLE_NAME . '.diet_amount as Dieta, ' .
+            self::TABLE_NAME . '.lodging_amount as Hospedaje, ' .
+            self::TABLE_NAME . '.conciliation_entrancedate as Entrada_hospedaje, ' .
+            self::TABLE_NAME . '.conciliation_exitdate as Salida_hospedaje, ' .
             'person_persons.person_name as Nombre,
-							person_persons.person_lastname as PrimerApellido,
-							person_persons.person_secondlastname as SegundoApellido,
+							person_persons.person_lastname as Primer_Apellido,
+							person_persons.person_secondlastname as Segundo_Apellido,
 							person_persons.person_identity as CI,
-							conf_provinces.province_name as provincia_hospedaje,
+							conf_provinces.province_name as Provincia_hospedaje,
 							conf_hotels.hotel_name as Hotel,
 							conf_costcenters.center_name as Centro_costo,' .
-            $request_requests_table . '.request_inversiontask as tarea_inversion, ' .
-            $request_requests_table . '.request_details as detalle');
+            $request_requests_table . '.request_inversiontask as Tarea_inversion, ' .
+            $request_requests_table . '.request_details as Detalle');
         $this->db->from('request_requests');
         $this->db->join('person_persons', 'person_persons.person_id = request_requests.person_idworker', 'inner');
         $this->db->join('conf_motives', 'conf_motives.motive_id = request_requests.motive_id', 'inner');
@@ -357,7 +355,7 @@ class Lodging_conciliations extends Controller
         $this->db->distinct();
         $this->db->order_by('entrada_hospedaje', 'asc');
         $result = $this->db->get();
-        to_excel($result, 'reporte_de_conciliacion_hospedaje');
+        to_excel($result, 'Reporte_de_conciliacion_hospedaje');
     }
 
     function to_excel($array)
@@ -490,13 +488,13 @@ class Lodging_conciliations extends Controller
                 $str = iconv('UTF-8', 'windows-1252', $data [$i] ['lodging_exitdate']);
                 $pdf->Cell(23, 5, $str, '', '', '', true);
 
-                $str = iconv('UTF-8', 'windows-1252', $data [$i] ['diet']);
+                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['diet'], 2, ".", ","));
                 $pdf->Cell(20, 5, $str, '', '', 'L', true);
 
-                $str = iconv('UTF-8', 'windows-1252', $data [$i] ['lodging']);
+                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['lodging'], 2, ".", ","));
                 $pdf->Cell(20, 5, $str, '', '', 'R', true);
 
-                $str = iconv('UTF-8', 'windows-1252', $data [$i] ['total']);
+                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['total'], 2, ".", ","));
                 $pdf->Cell(42, 5, $str, '', '', 'R', true);
                 $pdf->Ln();
                 if ($i < $cant - 1) {

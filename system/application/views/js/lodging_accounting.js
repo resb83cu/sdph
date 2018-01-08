@@ -199,7 +199,8 @@ Ext.onReady(function () {
      */
     Accounting.accountingDataProxy = new Ext.data.HttpProxy({
         url: baseUrl + 'index.php/lodging/lodging_conciliations/accounting/true/no',
-        method: 'POST'
+        method: 'POST',
+        timeout: 90000
     });
 
     accountingDataStore = new Ext.data.Store({

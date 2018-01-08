@@ -1,3 +1,4 @@
 /.idea
 /system/application/config/config.php
 /system/logs
+/system/application/config/database.php

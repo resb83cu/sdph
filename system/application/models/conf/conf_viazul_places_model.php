@@ -235,7 +235,6 @@ class Conf_viazul_places_model extends Model
         return $viazul_place_name;
     }
 
-
     public function getProvinceIdById($viazul_place_id)
     {
         $this->db->select('province_id');

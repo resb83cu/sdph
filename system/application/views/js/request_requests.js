@@ -25,6 +25,30 @@ var dataStoreProv = new Ext.data.Store({
     autoLoad: true
 });
 
+var dataRecordViazulPlace = new Ext.data.Record.create([
+    {
+        name: 'viazul_place_id'
+    },
+    {
+        name: 'viazul_place_name'
+    }
+]);
+
+var dataReaderViazulPlace = new Ext.data.JsonReader({
+    root: 'data'
+}, dataRecordViazulPlace);
+
+var dataProxyViazulPlace = new Ext.data.HttpProxy({
+    url: baseUrl + 'index.php/conf/conf_viazul_places/getAllData',
+    method: 'POST'
+});
+
+var dataStoreViazulPlace = new Ext.data.Store({
+    proxy: dataProxyViazulPlace,
+    reader: dataReaderViazulPlace,
+    autoLoad: true
+});
+
 var dataRecordCenter = new Ext.data.Record.create([
     {
         name: 'center_id'
@@ -69,7 +93,7 @@ var dataProxyCenterSap = new Ext.data.HttpProxy({
 
 var dataStoreCenterSap = new Ext.data.Store({
     proxy: dataProxyCenterSap,
-    reader: dataReaderCenter,
+    reader: dataReaderCenterSap,
     autoLoad: true
 });
 
@@ -1388,15 +1412,66 @@ Ext.onReady(function () {
                                     'select': function () {
                                         Ext.getCmp('frm_transport_idlodging').setValue(Ext.getCmp('frm_transport_idexit').getValue());
                                         var id = Ext.getCmp('frm_transport_idexit').getValue() - 1;
-                                        if (id == 0) {
-                                            Ext.getCmp('frm_transport_itinerary').getEl().up('.x-form-item').setDisplayed(true);
-                                            updateForm.findById('frm_transport_itinerary').enable();
-                                            updateForm.findById('frm_transport_itinerary').setValue('');
-                                        } else {
-                                            Ext.getCmp('frm_transport_itinerary').getEl().up('.x-form-item').setDisplayed(false);
-                                            updateForm.findById('frm_transport_itinerary').disable();
-                                            Ext.getCmp('frm_ticket_exitdate').setDisabledDays([]);
-                                            updateForm.findById('frm_transport_itinerary').setValue('');
+
+                                        switch (id) {
+                                            case 0:
+                                            {
+                                                Ext.getCmp('frm_transport_itinerary').getEl().up('.x-form-item').setDisplayed(true);
+                                                updateForm.findById('frm_transport_itinerary').enable();
+                                                updateForm.findById('frm_transport_itinerary').setValue('');
+                                                Ext.getCmp('frm_province_idfrom').getEl().up('.x-form-item').setDisplayed(true);
+                                                updateForm.findById('frm_province_idfrom').enable();
+                                                updateForm.findById('frm_province_idfrom').setValue('');
+                                                Ext.getCmp('frm_province_idto').getEl().up('.x-form-item').setDisplayed(true);
+                                                updateForm.findById('frm_province_idto').enable();
+                                                updateForm.findById('frm_province_idto').setValue('');
+                                                Ext.getCmp('frm_viazul_place_idfrom').getEl().up('.x-form-item').setDisplayed(false);
+                                                updateForm.findById('frm_viazul_place_idfrom').disable();
+                                                updateForm.findById('frm_viazul_place_idfrom').setValue('');
+                                                Ext.getCmp('frm_viazul_place_idto').getEl().up('.x-form-item').setDisplayed(false);
+                                                updateForm.findById('frm_viazul_place_idto').disable();
+                                                updateForm.findById('frm_viazul_place_idto').setValue('');
+                                            }
+                                                break;
+                                            case 1:
+                                            {
+                                                Ext.getCmp('frm_transport_itinerary').getEl().up('.x-form-item').setDisplayed(false);
+                                                Ext.getCmp('frm_province_idfrom').getEl().up('.x-form-item').setDisplayed(false);
+                                                Ext.getCmp('frm_province_idto').getEl().up('.x-form-item').setDisplayed(false);
+                                                updateForm.findById('frm_transport_itinerary').disable();
+                                                updateForm.findById('frm_province_idfrom').disable();
+                                                updateForm.findById('frm_province_idto').disable();
+                                                Ext.getCmp('frm_ticket_exitdate').setDisabledDays([]);
+                                                updateForm.findById('frm_transport_itinerary').setValue('');
+                                                updateForm.findById('frm_province_idfrom').setValue('');
+                                                updateForm.findById('frm_province_idto').setValue('');
+                                                Ext.getCmp('frm_viazul_place_idfrom').getEl().up('.x-form-item').setDisplayed(true);
+                                                updateForm.findById('frm_viazul_place_idfrom').enable();
+                                                updateForm.findById('frm_viazul_place_idfrom').setValue('');
+                                                Ext.getCmp('frm_viazul_place_idto').getEl().up('.x-form-item').setDisplayed(true);
+                                                updateForm.findById('frm_viazul_place_idto').enable();
+                                                updateForm.findById('frm_viazul_place_idto').setValue('');
+                                            }
+                                                break;
+                                            default:
+                                            {
+                                                Ext.getCmp('frm_transport_itinerary').getEl().up('.x-form-item').setDisplayed(false);
+                                                updateForm.findById('frm_transport_itinerary').disable();
+                                                updateForm.findById('frm_transport_itinerary').setValue('');
+                                                Ext.getCmp('frm_ticket_exitdate').setDisabledDays([]);
+                                                Ext.getCmp('frm_province_idfrom').getEl().up('.x-form-item').setDisplayed(true);
+                                                updateForm.findById('frm_province_idfrom').enable();
+                                                updateForm.findById('frm_province_idfrom').setValue('');
+                                                Ext.getCmp('frm_province_idto').getEl().up('.x-form-item').setDisplayed(true);
+                                                updateForm.findById('frm_province_idto').enable();
+                                                updateForm.findById('frm_province_idto').setValue('');
+                                                Ext.getCmp('frm_viazul_place_idfrom').getEl().up('.x-form-item').setDisplayed(false);
+                                                updateForm.findById('frm_viazul_place_idfrom').disable();
+                                                updateForm.findById('frm_viazul_place_idfrom').setValue('');
+                                                Ext.getCmp('frm_viazul_place_idto').getEl().up('.x-form-item').setDisplayed(false);
+                                                updateForm.findById('frm_viazul_place_idto').disable();
+                                                updateForm.findById('frm_viazul_place_idto').setValue('');
+                                            }
                                         }
                                     },
                                     'blur': function () {
@@ -1475,6 +1550,7 @@ Ext.onReady(function () {
                                 id: 'frm_province_idfrom',
                                 name: 'province_idfrom',
                                 hiddenName: 'province_idfrom',
+                                disabled: true,
                                 listeners: {
                                     'blur': function () {
                                         var flag = dataStoreProv.findExact('province_id', Ext.getCmp('frm_province_idfrom').getValue());
@@ -1521,6 +1597,7 @@ Ext.onReady(function () {
                                 id: 'frm_province_idto',
                                 name: 'province_idto',
                                 hiddenName: 'province_idto',
+                                disabled: true,
                                 listeners: {
                                     'select': function () {
                                         var itinerary = Ext.getCmp('frm_transport_itinerary').getValue();
@@ -1550,6 +1627,66 @@ Ext.onReady(function () {
                                             return false;
                                         }
                                     }
+                                }
+                            }), new Ext.form.ComboBox({
+                                store: dataStoreViazulPlace,
+                                fieldLabel: 'Origen',
+                                displayField: 'viazul_place_name',
+                                valueField: 'viazul_place_id',
+                                allowBlank: true,
+                                typeAhead: true,
+                                mode: 'local',
+                                triggerAction: 'all',
+                                emptyText: 'Seleccione un lugar ...',
+                                selectOnFocus: true,
+                                width: 200,
+                                id: 'frm_viazul_place_idfrom',
+                                name: 'viazul_place_idfrom',
+                                hiddenName: 'viazul_place_idfrom',
+                                disabled: true,
+                                listeners: {
+                                    'blur': function () {
+                                        var flag = dataStoreViazulPlace.findExact('viazul_place_id', Ext.getCmp('frm_viazul_place_idfrom').getValue());
+                                        if (flag == -1 && Ext.getCmp('frm_viazul_place_idfrom').getValue() != '') {
+                                            Ext.Msg.alert('Valor Inv&aacute;lido', 'Debe seleccionar un valor de la lista y no introducir un dato err&oacute;neo.');
+                                            Ext.getCmp('frm_viazul_place_idfrom').reset();
+                                            return false;
+                                        }
+                                    },
+                                    'select': function () {
+                                        Ext.getCmp('frm_viazul_place_idto_return').setValue(Ext.getCmp('frm_viazul_place_idfrom').getValue());
+                                    }
+
+                                }
+                            }), new Ext.form.ComboBox({
+                                store: dataStoreViazulPlace,
+                                fieldLabel: 'Destino',
+                                displayField: 'viazul_place_name',
+                                valueField: 'viazul_place_id',
+                                allowBlank: true,
+                                typeAhead: true,
+                                mode: 'local',
+                                triggerAction: 'all',
+                                emptyText: 'Seleccione un lugar ...',
+                                selectOnFocus: true,
+                                width: 200,
+                                id: 'frm_viazul_place_idto',
+                                name: 'viazul_place_idto',
+                                hiddenName: 'viazul_place_idto',
+                                disabled: true,
+                                listeners: {
+                                    'blur': function () {
+                                        var flag = dataStoreViazulPlace.findExact('viazul_place_id', Ext.getCmp('frm_viazul_place_idto').getValue());
+                                        if (flag == -1 && Ext.getCmp('frm_viazul_place_idto').getValue() != '') {
+                                            Ext.Msg.alert('Valor Inv&aacute;lido', 'Debe seleccionar un valor de la lista y no introducir un dato err&oacute;neo.');
+                                            Ext.getCmp('frm_viazul_place_idto').reset();
+                                            return false;
+                                        }
+                                    },
+                                    'select': function () {
+                                        //Ext.getCmp('frm_province_idlodging').setValue(Ext.getCmp('frm_province_idto').getValue());
+                                    }
+
                                 }
                             })]
                         },
@@ -1907,6 +2044,10 @@ Ext.onReady(function () {
             listeners: {
                 'afterlayout': function (form) {
                     Ext.getCmp('frm_transport_itinerary').getEl().up('.x-form-item').setDisplayed(false);
+                    Ext.getCmp('frm_province_idfrom').getEl().up('.x-form-item').setDisplayed(false);
+                    Ext.getCmp('frm_province_idto').getEl().up('.x-form-item').setDisplayed(false);
+                    Ext.getCmp('frm_viazul_place_idfrom').getEl().up('.x-form-item').setDisplayed(false);
+                    Ext.getCmp('frm_viazul_place_idto').getEl().up('.x-form-item').setDisplayed(false);
                     //Ext.getCmp('frm_transport_return_itinerary').getEl().up('.x-form-item').setDisplayed(false);
                 }
             }
