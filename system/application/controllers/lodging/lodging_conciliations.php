@@ -264,13 +264,13 @@ class Lodging_conciliations extends Controller
                     $str = iconv('UTF-8', 'windows-1252', $data [$i] ['lodging_exitdate']);
                     $pdf->Cell(23, 5, $str, '', '', '', true);
 
-                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['diet'], 2, ".", ","));
+                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['diet'], 2, ".", " "));
                     $pdf->Cell(20, 5, $str, '', '', 'L', true);
 
-                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['lodging'], 2, ".", ","));
+                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['lodging'], 2, ".", " "));
                     $pdf->Cell(20, 5, $str, '', '', 'R', true);
 
-                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['total'], 2, ".", ","));
+                    $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['total'], 2, ".", " "));
                     $pdf->Cell(42, 5, $str, '', '', 'R', true);
                     $pdf->Ln();
                     if ($i < $cant - 1) {
@@ -488,13 +488,13 @@ class Lodging_conciliations extends Controller
                 $str = iconv('UTF-8', 'windows-1252', $data [$i] ['lodging_exitdate']);
                 $pdf->Cell(23, 5, $str, '', '', '', true);
 
-                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['diet'], 2, ".", ","));
+                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['diet'], 2, ".", " "));
                 $pdf->Cell(20, 5, $str, '', '', 'L', true);
 
-                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['lodging'], 2, ".", ","));
+                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['lodging'], 2, ".", " "));
                 $pdf->Cell(20, 5, $str, '', '', 'R', true);
 
-                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['total'], 2, ".", ","));
+                $str = iconv('UTF-8', 'windows-1252', number_format($data [$i] ['total'], 2, ".", " "));
                 $pdf->Cell(42, 5, $str, '', '', 'R', true);
                 $pdf->Ln();
                 if ($i < $cant - 1) {
